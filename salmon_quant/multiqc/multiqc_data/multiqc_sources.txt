@@ -1,0 +1,15 @@
+Module	Section	Sample Name	Source
+Salmon	all_sections	SRR24053359_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053359_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053380_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053380_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053357_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053357_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053368_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053368_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053360_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053360_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053373_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053373_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053367_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053367_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053369_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053369_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053379_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053379_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053358_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053358_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053371_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053371_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053370_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053370_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053372_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053372_trans_quant/libParams/flenDist.txt
+Salmon	all_sections	SRR24053374_trans_quant	/home/razmia/salmon_quant/salmon_output/SRR24053374_trans_quant/libParams/flenDist.txt

@@ -1,0 +1,6 @@
+salmon_quant/downstream_analysis/
+salmon_quant/ref_files/
+.RDataTmp
+.RData
+.Rhistory
+

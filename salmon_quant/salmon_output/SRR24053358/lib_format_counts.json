@@ -1,0 +1,22 @@
+{
+    "read_files": "[ /home/razmia/isoform_analysis/data/processed_reads/SRR24053358_1.fastq.gz, /home/razmia/isoform_analysis/data/processed_reads/SRR24053358_2.fastq.gz]",
+    "expected_format": "ISR",
+    "compatible_fragment_ratio": 1.0,
+    "num_compatible_fragments": 33031003,
+    "num_assigned_fragments": 33031003,
+    "num_frags_with_concordant_consistent_mappings": 30727824,
+    "num_frags_with_inconsistent_or_orphan_mappings": 2548076,
+    "strand_mapping_bias": 4.230691538750352e-7,
+    "MSF": 0,
+    "OSF": 0,
+    "ISF": 13,
+    "MSR": 0,
+    "OSR": 0,
+    "ISR": 30727824,
+    "SF": 1373123,
+    "SR": 1174940,
+    "MU": 0,
+    "OU": 0,
+    "IU": 0,
+    "U": 0
+}

@@ -1,0 +1,10 @@
+{
+    "salmon_version": "1.10.3",
+    "index": "/home/razmia/isoform_analysis/ref_files/salmon_index",
+    "libType": "A",
+    "mates1": "/home/razmia/isoform_analysis/data/processed_reads/SRR24053360_1.fastq.gz",
+    "mates2": "/home/razmia/isoform_analysis/data/processed_reads/SRR24053360_2.fastq.gz",
+    "output": "/home/razmia/isoform_analysis/salmon_output/SRR24053360_trans_quant",
+    "validateMappings": [],
+    "auxDir": "aux_info"
+}
