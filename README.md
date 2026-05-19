@@ -17,87 +17,87 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 
 1. **Data Import**
 
-* Download paired-end raw reads (fastq files) from NCBI GEO. 
+- Download paired-end raw reads (fastq files) from NCBI GEO. 
 
-* Tool: fasterq-dump
+- Tool: fasterq-dump
 
 2. **Initial QC**
 
-* Check the quality of raw reads, including per base sequence quality, adapter sequences, GC content etc. 
+- Check the quality of raw reads, including per base sequence quality, adapter sequences, GC content etc. 
 
-* Tool: fastqc
+- Tool: fastqc
 
 3. **QC**
 
-* All-in-one processing to remove low quality sequences, over represented sequences & adapter trimming. 
+- All-in-one processing to remove low quality sequences, over represented sequences & adapter trimming. 
 
-* Tool: fastp
+- Tool: fastp
 
 4. **Quantification**
 
-* Mapping & quantification of reads against a reference transcriptome (GRCh38). 
+- Mapping & quantification of reads against a reference transcriptome (GRCh38). 
 
-* Tool: Salmon
+- Tool: Salmon
 
 5. **Post-Alignment QC**
 
-* Check the mapping quality & mapping rate of reads against the reference transcriptome. 
+- Check the mapping quality & mapping rate of reads against the reference transcriptome. 
 
-* Tool: MultiQC
+- Tool: MultiQC
 
 6. **Isoform Switch Analysis**
 
-* Isoform switches in tumor samples along with their functional consequences including Non-sense mediated decay (NMD) sensitivity, intron retention & coding potential of isoform was analyzed. 
+- Isoform switches in tumor samples along with their functional consequences including Non-sense mediated decay (NMD) sensitivity, intron retention & coding potential of isoform was analyzed. 
 
-* Tool: IsoformSwitchAnalyzeR
+- Tool: IsoformSwitchAnalyzeR
 
 7. **Visualization**
 
-* Statistically significant switches, alternative splicing events & consequence summary for different genes was visualized.
+- Statistically significant switches, alternative splicing events & consequence summary for different genes was visualized.
 
-* Tool: IsoformSwitchAnalyzeR
+- Tool: IsoformSwitchAnalyzeR
 
 
 ## Results
 
 1. **Read Mapping & Sample Quality**
 
-* Salmon automatically inferred the library type to be ISR (Inward, Stranded & Reverse). 
+- Salmon automatically inferred the library type to be ISR (Inward, Stranded & Reverse). 
 
-* All samples had high mapping rate (above 90%) against the reference transcriptome. 
+- All samples had high mapping rate (above 90%) against the reference transcriptome. 
 
 2. **Sample Clustering**
 
-* Principle Component Analysis (PCA) showed that tissue condition (tumor vs normal) was the main driver of transcriptomic heterogeneity, with PC1 accounting for 28.3% of total variance. 
+- Principle Component Analysis (PCA) showed that tissue condition (tumor vs normal) was the main driver of transcriptomic heterogeneity, with PC1 accounting for 28.3% of total variance. 
 
-* PC2 captured minor within-group heterogeneity. 
+- PC2 captured minor within-group heterogeneity. 
 
 ![PCA Sample Clustering Plot](isoformswitchanalyzer/Plots/PCA_Plot.png)
 
 3. **Isoform Analysis & Switch Consequences**
 
-* Differential splicing analysis identified identified 808 significant isoform switches in 658 distinct genes, involving 911 isoforms. 
+- Differential splicing analysis identified identified 808 significant isoform switches in 658 distinct genes, involving 911 isoforms. 
 
-* After filtering for functional consequences, 452 genes had 578 isoform switches that were known to cause functional consequences including intron retention, NMD, and structural modifications.
+- After filtering for functional consequences, 452 genes had 578 isoform switches that were known to cause functional consequences including intron retention, NMD, and structural modifications.
 
 4. **Top Significant Switching Genes**
 
-* GAB2, DXIDC1, CRTC1 & CRB3 were the most heavily altered genes. 
+- GAB2, DXIDC1, CRTC1 & CRB3 were the most heavily altered genes. 
 
-* Global alternative splicing mechanisms showed that 548 isoforms contain single intron retention (IR), while 143 isoforms contained multiple IR. 
+- Global alternative splicing mechanisms showed that 548 isoforms contain single intron retention (IR), while 143 isoforms contained multiple IR. 
 
 5. **Functional Consequence Profiling**
 
-* Functional consequence analysis showed that tumor upregulated isoforms alter the transcript’s coding potential and ORF structure. 
+- Functional consequence analysis showed that tumor upregulated isoforms alter the transcript’s coding potential and ORF structure. 
 
-* Analysis showed balanced rate of intron retention and intron gain while small subset of switches resulted in altered NMD sensitivity. 
+- Analysis showed balanced rate of intron retention and intron gain while small subset of switches resulted in altered NMD sensitivity. 
 ![Functional Consequence Summary Plot](isoformswitchanalyzer/Plots/Consequnce_Summary.png)
 
 6. **Alternative Splicing & Genome-Wide Enrichment**
 
-* Analysis of alternative splicing events showed that alternative transcription start site (ATSS) and alternative transcription termination sites (ATTS) are the main events driving isoform variation within tumor samples. 
+- Analysis of alternative splicing events showed that alternative transcription start site (ATSS) and alternative transcription termination sites (ATTS) are the main events driving isoform variation within tumor samples. 
 
-* Genome-wide splicing enrichment analysis identified that transcripts undergoing ATSS and ATTS events showed a significant enrichment toward "gain" features, indicating preferential usage of alternative upstream initiation and downstream termination coordinates in tumor tissue.  
+- Genome-wide splicing enrichment analysis identified that transcripts undergoing ATSS and ATTS events showed a significant enrichment toward "gain" features, indicating preferential usage of alternative upstream initiation and downstream termination coordinates in tumor tissue.  
 
 ![Alternative Splicing Distribution Plot](isoformswitchanalyzer/Plots/Alternative_Transcription_Events.png)
 
