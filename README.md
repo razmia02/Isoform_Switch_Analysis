@@ -76,7 +76,7 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 
 3. **Isoform Analysis & Switch Consequences**
 
-- Differential splicing analysis identified identified 808 significant isoform switches in 658 distinct genes, involving 911 isoforms. 
+- Differential splicing analysis identified 808 significant isoform switches in 658 distinct genes, involving 911 isoforms. 
 
 - After filtering for functional consequences, 452 genes had 578 isoform switches that were known to cause functional consequences including intron retention, NMD, and structural modifications.
 
@@ -104,7 +104,7 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 
 **Detailed Results for DIXDC1 gene**
 
-The most significant isoform switch within DIXDC1 genes shows that longer, protein-coding transcript ENST00000440460.7 in tumor samples, while the transcript ENST00000618522.4 is suppressed in tumor samples. While gene expression remains almost the same in tumor and normal samples, individual transcripts showed that upregulated tumor isoform gained intrinsically disordered region (IDR). This altered isoform expression suggests a role of this isoform in tumor profile. 
+The most significant isoform switch within DIXDC1 genes shows that longer, protein-coding transcript ENST00000440460.7 in tumor samples, while the transcript ENST00000618522.4 is suppressed in tumor samples. While gene expression remains almost the same in tumor and normal samples, individual transcripts showed that upregulated tumor isoform gained intrinsically disordered region (IDR). This altered isoform expression suggests a role of this isoform in HCC profile. 
 
 ![DIXDC1 Switch Plot](isoformswitchanalyzer/Plots/Switch_Plot_DIXDC1.png)
 
