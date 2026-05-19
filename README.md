@@ -120,7 +120,7 @@ Downstream functional consequence analysis utilizing IsoformSwitchAnalyzeR was c
 
 
 ## Repository Structure 
-```text
+
 Isoform_Switch_Analysis/
 ├── salmon_quant/                # Main directory for performing Salmon Quantification
 │   ├── data/                    # Accession List for selected samples
