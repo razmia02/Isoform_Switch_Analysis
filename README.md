@@ -72,7 +72,7 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 
 * PC2 captured minor within-group heterogeneity. 
 
-[PCA Sample Clustering Plot](isoformswitchanalyzer/Plots/PCA_Plot.png)
+![PCA Sample Clustering Plot](isoformswitchanalyzer/Plots/PCA_Plot.png)
 
 3. **Isoform Analysis & Switch Consequences**
 
@@ -92,7 +92,7 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 
 * Analysis showed balanced rate of intron retention and intron gain while small subset of switches resulted in altered NMD sensitivity. 
 
-[Functional Consequence Summary Plot](isoformswitchanalyzer/Plots/Consequence_Summary.png)
+![Functional Consequence Summary Plot](isoformswitchanalyzer/Plots/Consequence_Summary.png)
 
 6. **Alternative Splicing & Genome-Wide Enrichment**
 
@@ -100,14 +100,14 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 
 * Genome-wide splicing enrichment analysis identified that transcripts undergoing ATSS and ATTS events showed a significant enrichment toward "gain" features, indicating preferential usage of alternative upstream initiation and downstream termination coordinates in tumor tissue.  
 
-[Alternative Splicing Distribution Plot](isoformswitchanalyzer/Plots/Alternative_Transcription_Events.png)
+![Alternative Splicing Distribution Plot](isoformswitchanalyzer/Plots/Alternative_Transcription_Events.png)
 
 
 **Detailed Results for DIXDC1 gene**
 
 The most significant isoform switch within DIXDC1 genes shows that longer, protein-coding transcript ENST00000440460.7 in tumor samples, while the transcript ENST00000618522.4 is suppressed in tumor samples. While gene expression remains almost the same in tumor and normal samples, individual transcripts showed that upregulated tumor isoform gained intrinsically disordered region (IDR). This altered isoform expression suggests a role of this isoform in tumor profile. 
 
-[DIXDC1 Switch Plot](isoformswitchanalyzer/Plots/Switch_Plot_DIXDC1.png)
+![DIXDC1 Switch Plot](isoformswitchanalyzer/Plots/Switch_Plot_DIXDC1.png)
 
 ## Limitations
 
@@ -142,6 +142,6 @@ Isoform_Switch_Analysis/
 ```text
 
 ## References
-
-* [Salmon Documentation](https://salmon.readthedocs.io/en/latest/salmon.html)
-* [IsoformSwitchAnalyzeR Tool Paper](https://doi.org/10.1093/bioinformatics/btz247)
+- [GEO DATASET](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)
+- [Salmon Documentation](https://salmon.readthedocs.io/en/latest/salmon.html)
+- [IsoformSwitchAnalyzeR Tool Paper](https://academic.oup.com/bioinformatics/article/35/21/4469/5466456)
