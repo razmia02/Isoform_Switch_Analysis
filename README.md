@@ -120,7 +120,7 @@ Downstream functional consequence analysis utilizing IsoformSwitchAnalyzeR was c
 
 
 ## Repository Structure 
-
+```
 Isoform_Switch_Analysis/
 ├── salmon_quant/                # Main directory for performing Salmon Quantification
 │   ├── data/                    # Accession List for selected samples
@@ -138,7 +138,7 @@ Isoform_Switch_Analysis/
     ├── metadata.csv             # CSV file for selected samples & their condition
     ├── isoformswitchanalyzer.Rproj # R project
 └── Readme.md                # Readme.md file
-
+```
 
 ## References
 - [GEO DATASET](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)
