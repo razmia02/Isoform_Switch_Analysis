@@ -138,6 +138,9 @@ Isoform_Switch_Analysis/
     ├── metadata.csv             # CSV file for selected samples & their condition
     ├── isoformswitchanalyzer.Rproj # R project
 └── Readme.md                # Readme.md file
+└── env.yaml               # Conda env for salmon
+└── r_session_info.txt     # R package versions
+
 ```
 
 ## References
