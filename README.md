@@ -91,8 +91,7 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 * Functional consequence analysis showed that tumor upregulated isoforms alter the transcript’s coding potential and ORF structure. 
 
 * Analysis showed balanced rate of intron retention and intron gain while small subset of switches resulted in altered NMD sensitivity. 
-
-![Functional Consequence Summary Plot](isoformswitchanalyzer/Plots/Consequence_Summary.png)
+![Functional Consequence Summary Plot](isoformswitchanalyzer/Plots/Consequnce_Summary.png)
 
 6. **Alternative Splicing & Genome-Wide Enrichment**
 
@@ -142,6 +141,6 @@ Isoform_Switch_Analysis/
 ```text
 
 ## References
-- [GEO DATASET](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)
-- [Salmon Documentation](https://salmon.readthedocs.io/en/latest/salmon.html)
-- [IsoformSwitchAnalyzeR Tool Paper](https://academic.oup.com/bioinformatics/article/35/21/4469/5466456)
+- [GEO DATASET] (https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)
+- [Salmon Documentation] (https://salmon.readthedocs.io/en/latest/salmon.html)
+- [IsoformSwitchAnalyzeR Tool Paper] (https://academic.oup.com/bioinformatics/article/35/21/4469/5466456)
