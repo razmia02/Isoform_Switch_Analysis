@@ -138,9 +138,9 @@ Isoform_Switch_Analysis/
     ├── metadata.csv             # CSV file for selected samples & their condition
     ├── isoformswitchanalyzer.Rproj # R project
 └── Readme.md                # Readme.md file
-```text
+
 
 ## References
-- [GEO DATASET] (https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)
-- [Salmon Documentation] (https://salmon.readthedocs.io/en/latest/salmon.html)
-- [IsoformSwitchAnalyzeR Tool Paper] (https://academic.oup.com/bioinformatics/article/35/21/4469/5466456)
+- [GEO DATASET](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)
+- [Salmon Documentation](https://salmon.readthedocs.io/en/latest/salmon.html)
+- [IsoformSwitchAnalyzeR Tool Paper](https://academic.oup.com/bioinformatics/article/35/21/4469/5466456)
