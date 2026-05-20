@@ -68,10 +68,6 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 
 The full dataset contains samples lacking matched normal controls. For isoform switch analysis, tumour-normal pairing is essential to study transcriptomic variation. Computational constraints also informed this decision. Only samples with confirmed matched pairs were retained, yielding 7 HCC and 7 normal thyroid samples.
 
-**Why isoform-level analysis over standard DEG?**
-
-Standard DEG analysis (e.g. DESeq2 on gene-level counts) would not capture scenarios where total gene expression is stable but isoform usage shifts — a pattern that can have profound functional consequences. DIXDC1 is a direct example from this dataset: gene-level analysis would have missed it entirely.
-
 **Why Salmon over HISAT2 + featureCounts?**
 
 Isoform-level quantification requires transcript-level resolution. HISAT2 + featureCounts is optimised for gene-level count matrices and would have required additional assembly steps (e.g. StringTie) to recover novel isoforms, which was outside the scope of this analysis. Salmon's quasi-mapping approach quantifies directly against the reference transcriptome at transcript resolution, is computationally efficient, and its output integrates directly with IsoformSwitchAnalyzeR. `--validateMappings` was enabled to improve mapping accuracy by removing invalid multi-mapping reads.
@@ -80,6 +76,9 @@ Isoform-level quantification requires transcript-level resolution. HISAT2 + feat
 
 GENCODE v44 provides the most comprehensive human transcript annotation, including complete genome assembly (GRCh38.p14) and a matched GTF file required for transcript-level quantification. Using a comprehensive annotation is critical for isoform analysis.
 
+**Why isoform-level analysis over standard DEG?**
+
+Standard DEG analysis (e.g. DESeq2 on gene-level counts) would not capture scenarios where total gene expression is stable but isoform usage shifts — a pattern that can have profound functional consequences. DIXDC1 is a direct example from this dataset: gene-level analysis would have missed it entirely.
 
 ## Results
 
@@ -91,7 +90,7 @@ GENCODE v44 provides the most comprehensive human transcript annotation, includi
 
 2. **Sample Clustering**
 
-- Principle Component Analysis (PCA) showed that tissue condition (tumor vs normal) was the main driver of transcriptomic heterogeneity, with PC1 accounting for 28.3% of total variance. 
+- Principal Component Analysis (PCA) showed that tissue condition (tumor vs normal) was the main driver of transcriptomic heterogeneity, with PC1 accounting for 28.3% of total variance. 
 
 - PC2 captured minor within-group heterogeneity. 
 
@@ -105,7 +104,7 @@ GENCODE v44 provides the most comprehensive human transcript annotation, includi
 
 4. **Top Significant Switching Genes**
 
-- GAB2, DXIDC1, CRTC1 & CRB3 were the most heavily altered genes. 
+- GAB2, DIXDC1, CRTC1 & CRB3 were the most heavily altered genes. 
 
 - Global alternative splicing mechanisms showed that 548 isoforms contain single intron retention (IR), while 143 isoforms contained multiple IR. 
 
