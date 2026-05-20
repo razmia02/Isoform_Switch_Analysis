@@ -147,4 +147,4 @@ Isoform_Switch_Analysis/
 - [GEO DATASET](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)
 - [Salmon Documentation](https://salmon.readthedocs.io/en/latest/salmon.html)
 - [IsoformSwitchAnalyzeR Tool Paper](https://academic.oup.com/bioinformatics/article/35/21/4469/5466456)
-- [Gopal, R. K., Vantaku, V. R., Panda, A., Reimer, B., Rath, S., To, T. L., Fisch, A. S., Cetinbas, M., Livneh, M., Calcaterra, M. J., Gigliotti, B. J., Pierce, K. A., Clish, C. B., Dias-Santagata, D., Sadow, P. M., Wirth, L. J., Daniels, G. H., Sadreyev, R. I., Calvo, S. E., Parangi, S., … Mootha, V. K. (2023). Effectors Enabling Adaptation to Mitochondrial Complex I Loss in Hürthle Cell Carcinoma. Cancer discovery, 13(8), 1904–1921. https://doi.org/10.1158/2159-8290.CD-22-0976](https://pubmed.ncbi.nlm.nih.gov/37262067/)
+- [Effectors Enabling Adaptation to Mitochondrial Complex I Loss in Hürthle Cell Carcinoma](https://pubmed.ncbi.nlm.nih.gov/37262067/)
