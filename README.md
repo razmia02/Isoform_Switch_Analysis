@@ -1,5 +1,10 @@
 # Isoform Switch Analysis in Hürthle Cell Carcinoma (HCC)
 
+## Background & Motivation
+
+Hürthle cell carcinoma (HCC) is a subtype of thyroid cancer, accounting for 3-5% of all thyroid malignancies. HCC is characterised by an abundance of malfunctioning mitochondria and poor response to radioiodine therapy. While prior studies have documented mitochondrial complex I DNA mutations and metabolomic vulnerabilities in HCC, the transcriptomic landscape 
+remains largely unexplored. No studies to date have specifically characterised isoform switching events in HCC.
+
 The analysis is performed on NCBI GEO dataset and explores the expression profiles of different isoforms in HCC tissues. The original study explored metabolomic profiles of HCC and identified that mitochondrial complex I loss along with lipid peroxide stress is a vulnerability in HCC. This analysis performed on a subset of samples explores the isoform profiles in HCC, identifies some major genes undergoing functional isoform switching and highlights alternative splicing mechanisms that may drive the pathogenesis of the disease. 
 
 ## Objective
@@ -57,6 +62,24 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 
 - Tool: IsoformSwitchAnalyzeR
 
+## Analytical Decisions & Rationale
+
+**Why 7 matched pairs instead of the full dataset?**
+
+The full dataset contains samples lacking matched normal controls. For isoform switch analysis, tumour-normal pairing is essential to study transcriptomic variation. Computational constraints also informed this decision. Only samples with confirmed matched pairs were retained, yielding 7 HCC and 7 normal thyroid samples.
+
+**Why isoform-level analysis over standard DEG?**
+
+Standard DEG analysis (e.g. DESeq2 on gene-level counts) would not capture scenarios where total gene expression is stable but isoform usage shifts — a pattern that can have profound functional consequences. DIXDC1 is a direct example from this dataset: gene-level analysis would have missed it entirely.
+
+**Why Salmon over HISAT2 + featureCounts?**
+
+Isoform-level quantification requires transcript-level resolution. HISAT2 + featureCounts is optimised for gene-level count matrices and would have required additional assembly steps (e.g. StringTie) to recover novel isoforms, which was outside the scope of this analysis. Salmon's quasi-mapping approach quantifies directly against the reference transcriptome at transcript resolution, is computationally efficient, and its output integrates directly with IsoformSwitchAnalyzeR. `--validateMappings` was enabled to improve mapping accuracy by removing invalid multi-mapping reads.
+
+**Why GENCODE v44 as reference?**
+
+GENCODE v44 provides the most comprehensive human transcript annotation, including complete genome assembly (GRCh38.p14) and a matched GTF file required for transcript-level quantification. Using a comprehensive annotation is critical for isoform analysis.
+
 
 ## Results
 
@@ -108,6 +131,13 @@ The most significant isoform switch within DIXDC1 genes shows that longer, prote
 
 ![DIXDC1 Switch Plot](isoformswitchanalyzer/Plots/Switch_Plot_DIXDC1.png)
 
+## Interpretation 
+
+The dominance of ATSS and ATTS events as the primary drivers of isoform variation in HCC tumour samples is a notable finding. These events alter which promoter regions are utilised and where transcription terminates, potentially placing transcripts under different regulatory controls or producing proteins with altered N- or C-terminal domains. Whether this pattern reflects broader dysregulation of transcriptional machinery in HCC, or is specific to the mitochondrial-rich tumour microenvironment of this cancer type, is an open question this analysis cannot resolve but warrants further investigation.
+
+A balanced rate of NMD gain and loss across switching events was unexpected. A bias toward NMD gain would suggest tumour cells are selectively degrading certain transcripts; a bias toward loss would suggest escape from surveillance. The balanced pattern may reflect heterogeneous switching across tumour samples rather than a coordinated programme, though this remains uncharacterised.
+
+
 ## Limitations
 
 1. **Absence of Decoy Sequences in Transcript Quantification**
@@ -118,6 +148,8 @@ Transcript-level abundance estimation using Salmon was performed without incorpo
 
 Downstream functional consequence analysis utilizing IsoformSwitchAnalyzeR was conducted without integrating external topological or protein domain annotation databases. Consequently, while macro-structural changes like ORF lengths and IDRs were captured, localized disruptions to specific functional or catalytic protein domains remain uncharacterized.
 
+**Future directions:** Integrating decoy-aware Salmon indexing to reduce false-positive multi-mapping, adding protein domain annotation via Pfam or SignalP within IsoformSwitchAnalyzeR, and cross-referencing the top switching genes against known 
+HCC driver mutations would each meaningfully extend this analysis.
 
 ## Repository Structure 
 ```
@@ -148,3 +180,4 @@ Isoform_Switch_Analysis/
 - [Salmon Documentation](https://salmon.readthedocs.io/en/latest/salmon.html)
 - [IsoformSwitchAnalyzeR Tool Paper](https://academic.oup.com/bioinformatics/article/35/21/4469/5466456)
 - [Effectors Enabling Adaptation to Mitochondrial Complex I Loss in Hürthle Cell Carcinoma](https://pubmed.ncbi.nlm.nih.gov/37262067/)
+- [The Molecular Landscape of Hürthle Cell Thyroid Cancer Is Associated with Altered Mitochondrial Function—A Comprehensive Review](https://www.mdpi.com/2073-4409/9/7/1570)
