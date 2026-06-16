@@ -16,6 +16,7 @@ library(ggrepel)
 
 packageVersion('IsoformSwitchAnalyzeR') ### Check the package version
 
+getwd()
 
 #_______________________________________________________________________________
 
@@ -24,7 +25,7 @@ packageVersion('IsoformSwitchAnalyzeR') ### Check the package version
 ########## Import Salmon data ################
 
 salmonQuant <- importIsoformExpression(
-  parentDir = "D:/Projects/Isoform_Switching/salmon_quant/salmon_output",
+  parentDir = "D:/Projects/Isoform_Switching/salmon_output/quant_files",
   addIsofomIdAsColumn = TRUE)
 
 
@@ -32,7 +33,7 @@ salmonQuant <- importIsoformExpression(
 
 ############## Load the metadata info ############################
 
-metadata <- read.csv("metadata.csv")
+metadata <- read.csv("D:/Projects/Isoform_Switching/Updated_Metadata.csv")
 
 View(metadata)
 
@@ -91,7 +92,7 @@ pca_counts <- SwitchListFiltered$isoformRepExpression[, -1]
 
 pca_counts
 
-SwitchListFiltered$isoformRepIF
+SwitchListFiltered$isoformRepExpression$isoform_id
 
 ############ Add isoform information to TPM data ####################
 
@@ -127,6 +128,7 @@ ggplot(pca_df, aes(x = PC1, y = PC2, color = Condition, label = SampleID)) +
   )
 
 
+
 #_______________________________________________________________________________
 
 ######################## STEP-3: IDENTIFY ISOFORM SWITCHES ##################
@@ -140,7 +142,7 @@ SwitchListAnalyzed <- isoformSwitchTestDEXSeq(
 
 extractSwitchSummary(SwitchListAnalyzed)
 
-#### 658 genes, 911 transcripts/isoforms & 808 switches 
+#### 624 genes, 857 transcripts/isoforms & 772 switches 
 
 summary(SwitchListAnalyzed)
 
@@ -192,7 +194,7 @@ summary(SwitchListAnalyzed)
 
 ##### Alternatively, you can use IUPred2A (webserver) ######
 
-##### Pfam DONE (Locally - Refer to Script3.sh) #######
+##### Pfam DONE (Done through galaxy.eu PfamScan tool) #######
 
 
 #_______________________________________________________________________________
@@ -214,7 +216,7 @@ summary(SwitchListAnalyzed)
 
 SwitchListAnalyzed <- analyzePFAM(
   switchAnalyzeRlist   = SwitchListAnalyzed,
-  pathToPFAMresultFile = "switchanalyzer_output/pfam_results_1.txt",
+  pathToPFAMresultFile = "switchanalyzer_output/pfam_results_galaxy.txt",
   showProgress=FALSE)
 
 head(SwitchListAnalyzed$isoformFeatures$isoform_id)
@@ -230,6 +232,13 @@ SwitchListAnalyzed <- analyzeIUPred2A(
 
 SwitchListAnalyzed
 
+
+############### Add SignalP Analysis ########################
+
+SwitchListAnalyzed <- analyzeSignalP(
+  switchAnalyzeRlist       = SwitchListAnalyzed,
+  pathToSignalPresultFile  = "switchanalyzer_output/signalp_results.txt")
+
 #_______________________________________________________________________________
 
 ################# STEP-8: PREDICT ALTERNATIVE SPLICING ###################
@@ -244,7 +253,7 @@ table(SwitchListAnalyzed$AlternativeSplicingAnalysis$IR)
 
 ####################### STEP-9: PREDICT SWITCH CONSEQUENCES ####################
 
-consequencesOfInterest <- c('intron_retention','coding_potential','NMD_status','ORF_seq_similarity')
+consequencesOfInterest <- c('intron_retention','coding_potential','NMD_status','domains_identified','ORF_seq_similarity')
 
 SwitchListAnalyzed <- analyzeSwitchConsequences(
   SwitchListAnalyzed,
@@ -301,11 +310,11 @@ switchingIso <- extractTopSwitches(SwitchListAnalyzed,
                                    extractGenes = TRUE,  
                                    sortByQvals = TRUE)
 
-nrow(switchingIso) ### 452 genes have functional consequnces switching
+nrow(switchingIso) ### 437 genes have functional consequences switching
 
 write.csv(switchingIso, "results/All_Switches.csv")
 
-subset(switchingIso, gene_name == 'DIXDC1')
+subset(switchingIso, gene_name == 'CRTC1')
 
 
 #_______________________________________________________________________________
@@ -330,9 +339,9 @@ ggplot(data=SwitchListAnalyzed$isoformFeatures, aes(x=gene_log2_fold_change, y=d
 
 ############ Switch Plot for DIXDC1 gene ######################
 
-switchPlot(SwitchListAnalyzed, gene = 'DIXDC1')
+switchPlot(SwitchListAnalyzed, gene = 'CRTC1')
 
-switchPlotIsoUsage(SwitchListAnalyzed, gene = 'DIXDC1')
+switchPlotIsoUsage(SwitchListAnalyzed, gene = 'CRTC1')
 
 ########## Plot summarizing Alternative Splicing events ##################
 
@@ -350,3 +359,81 @@ splicingEnrichment <- extractSplicingEnrichment(SwitchListAnalyzed,
 
 
 
+
+
+
+
+
+
+#################### PERFORM PCA FOR INITIAL QUALITY ANALYSIS ################
+
+################### Extract Abundance (TPM) ##########################
+pca_counts <- SwitchListFiltered$isoformRepExpression[, -1]
+rownames(pca_counts) <- SwitchListFiltered$isoformRepExpression$isoform_id
+
+################## Filter: top 25% most variable isoforms #########################
+row_vars <- apply(pca_counts, 1, var)
+pca_counts_filtered <- pca_counts[row_vars > quantile(row_vars, 0.75), ]
+
+################## Log Transform #########################
+log_data <- t(log2(pca_counts_filtered + 1))
+
+######################### Run PCA ###########################
+pca_analysis <- prcomp(log_data, scale. = FALSE, center = TRUE)
+
+############## Prepare data for plot ###################
+pca_df <- as.data.frame(pca_analysis$x)
+pca_df$SampleID <- rownames(pca_df)
+
+# Safe condition matching by SampleID
+pca_df$Condition <- SwitchListFiltered$designMatrix$condition[
+  match(pca_df$SampleID, SwitchListFiltered$designMatrix$sampleID)
+]
+
+################ PCA Plot #####################
+ggplot(pca_df, aes(x = PC1, y = PC2, color = Condition, label = SampleID)) +
+  geom_point(size = 4) +    
+  geom_text_repel(size = 3) +  
+  scale_color_manual(values = c("dodgerblue", "firebrick")) +
+  labs(
+    title = "PCA of Isoform Expression (TPM)",
+    x = sprintf("PC1 (%1.1f%%)", summary(pca_analysis)$importance[2,1] * 100),
+    y = sprintf("PC2 (%1.1f%%)", summary(pca_analysis)$importance[2,2] * 100),
+    color = "Condition"
+  ) +
+  theme_bw() +
+  theme(legend.position = "right")
+
+
+
+
+
+# Scree plot — how much variance each PC captures
+scree_df <- data.frame(
+  PC = 1:min(10, length(pca_analysis$sdev)),
+  Variance = summary(pca_analysis)$importance[2, 1:min(10, length(pca_analysis$sdev))] * 100
+)
+
+ggplot(scree_df, aes(x = PC, y = Variance)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  geom_line() + geom_point() +
+  labs(title = "Scree Plot", y = "% Variance Explained", x = "Principal Component") +
+  theme_bw()
+
+
+
+
+
+
+
+# Reshape to long format
+tpm_long <- pca_counts %>%
+  tibble::rownames_to_column("isoform_id") %>%
+  pivot_longer(cols = -isoform_id, names_to = "SampleID", values_to = "TPM")
+
+# Plot
+ggplot(tpm_long, aes(x = SampleID, y = log2(TPM + 1))) +
+  geom_boxplot() +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Sample", y = "Log2(TPM + 1)", title = "TPM Distribution per Sample")
