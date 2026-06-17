@@ -231,6 +231,10 @@ summary(SwitchListAnalyzed)
 
 ##### Pfam DONE (Done through galaxy.eu PfamScan tool) #######
 
+##### DeepLoc2 DONE (Webserver) ##################
+
+##### DeepTMHMM DONE (webserver) ##############
+
 
 #_______________________________________________________________________________
 
@@ -273,6 +277,21 @@ SwitchListAnalyzed
 SwitchListAnalyzed <- analyzeSignalP(
   switchAnalyzeRlist       = SwitchListAnalyzed,
   pathToSignalPresultFile  = "switchanalyzer_output/signalp_results.txt")
+
+
+################# Add DeepLoc2 Analysis ############################
+
+exampleSwitchListAnalyzed <- analyzeDeepLoc2(
+  switchAnalyzeRlist = exampleSwitchListAnalyzed,
+  pathToDeepLoc2resultFile = system.file("extdata/deeploc2.csv", package = "IsoformSwitchAnalyzeR"),
+  quiet = FALSE)
+
+################### Add DeepTMHMM Analysis #########################
+
+exampleSwitchListAnalyzed <- analyzeDeepTMHMM(
+  switchAnalyzeRlist   = exampleSwitchListAnalyzed,
+  pathToDeepTMHMMresultFile = system.file("extdata/DeepTMHMM.gff3", package = "IsoformSwitchAnalyzeR"),
+  showProgress=FALSE)
 
 #_______________________________________________________________________________
 
