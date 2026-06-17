@@ -56,6 +56,12 @@ wget -P ${ref_files} https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/r
 
 wget -P ${ref_files} https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.annotation.gtf.gz
 
+
+######################### Genome Fasta for decoy aware quantification #########################################
+
+wget -P ${ref_files} https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/GRCh38.p14.genome.fa.gz
+
+
 #__________________________________________________________________________________________________________________________
 
 ########################################### STEP-1: DOWNLOAD FASTQ FILES  ############################################
