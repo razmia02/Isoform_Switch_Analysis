@@ -13,6 +13,8 @@ BiocManager::install("IsoformSwitchAnalyzeR")
 library(IsoformSwitchAnalyzeR)
 library(ggplot2)
 library(ggrepel)
+library(tidyr)
+library(dplyr)
 
 packageVersion('IsoformSwitchAnalyzeR') ### Check the package version
 
@@ -57,8 +59,7 @@ aSwitchList <- importRdata(
   designMatrix         = myDesign,
   isoformExonAnnoation = "D:/Projects/Isoform_Switching/salmon_quant/ref_files/gencode.v44.annotation.gtf.gz",
   isoformNtFasta       = "D:/Projects/Isoform_Switching/salmon_quant/ref_files/gencode.v44.transcripts.fa.gz",
-  showProgress = FALSE
-)
+  showProgress = FALSE)
 
 
 head(aSwitchList$isoformFeatures,2)
@@ -81,52 +82,86 @@ SwitchListFiltered <- preFilter(
   removeSingleIsoformGenes = TRUE, 
   reduceFurtherToGenesWithConsequencePotential = TRUE)
 
+#_______________________________________________________________________________
 
 #################### PERFORM PCA FOR INITIAL QUALITY ANALYSIS ################
-
-########## PCA is performed on abundance estimates rather than counts ##########
 
 ################### Extract Abundance (TPM) ##########################
 
 pca_counts <- SwitchListFiltered$isoformRepExpression[, -1]
 
-pca_counts
-
-SwitchListFiltered$isoformRepExpression$isoform_id
-
-############ Add isoform information to TPM data ####################
-
 rownames(pca_counts) <- SwitchListFiltered$isoformRepExpression$isoform_id
 
-################## Filter & log Transform #########################
+################## Filter: top 25% most variable isoforms #########################
 
-pca_counts_filtered <- pca_counts[apply(pca_counts, 1, var) > 0, ]
+row_vars <- apply(pca_counts, 1, var)
+
+pca_counts_filtered <- pca_counts[row_vars > quantile(row_vars, 0.75), ]
+
+################## Log Transform #########################
 
 log_data <- t(log2(pca_counts_filtered + 1))
 
 ######################### Run PCA ###########################
 
-pca_analysis <- prcomp(log_data, scale. = TRUE)
+pca_analysis <- prcomp(log_data, scale. = FALSE, center = TRUE)
 
 ############## Prepare data for plot ###################
 
 pca_df <- as.data.frame(pca_analysis$x)
 
-pca_df$SampleID  <- rownames(pca_df)
+pca_df$SampleID <- rownames(pca_df)
 
-pca_df$Condition <- aSwitchList$designMatrix$condition
+######### Matching sample condition & sampleID ###################
+
+pca_df$Condition <- SwitchListFiltered$designMatrix$condition[
+  match(pca_df$SampleID, SwitchListFiltered$designMatrix$sampleID)]
 
 ################ PCA Plot #####################
 
 ggplot(pca_df, aes(x = PC1, y = PC2, color = Condition, label = SampleID)) +
   geom_point(size = 4) +    
   geom_text_repel(size = 3) +  
-  scale_color_manual(values = c("dodgerblue", "firebrick")) + # Simple blue/red
-  labs(
+  scale_color_manual(values = c("dodgerblue", "firebrick")) +
+  labs(title = "PCA of Isoform Expression (TPM)",
     x = sprintf("PC1 (%1.1f%%)", summary(pca_analysis)$importance[2,1] * 100),
-    y = sprintf("PC2 (%1.1f%%)", summary(pca_analysis)$importance[2,2] * 100)
-  )
+    y = sprintf("PC2 (%1.1f%%)", summary(pca_analysis)$importance[2,2] * 100),
+    color = "Condition") +
+  theme_bw() +
+  theme(legend.position = "right")
 
+
+
+########### Scree plot — how much variance each PC captures ###################
+
+scree_df <- data.frame(PC = 1:min(10, length(pca_analysis$sdev)),
+  Variance = summary(pca_analysis)$importance[2, 1:min(10, length(pca_analysis$sdev))] * 100)
+
+ggplot(scree_df, aes(x = PC, y = Variance)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  geom_line() + geom_point() +
+  labs(title = "Scree Plot", y = "% Variance Explained", x = "Principal Component") +
+  theme_bw()
+
+##################### PLOT TPM ##############################
+
+############### Reshape to long format ####################
+
+tpm_long <- pca_counts %>%
+  tibble::rownames_to_column("isoform_id") %>%
+  pivot_longer(cols = -isoform_id, names_to = "SampleID", values_to = "TPM")
+
+tpm_long <- tpm_long %>%
+  left_join(SwitchListFiltered$designMatrix[, c("sampleID", "condition")],
+    by = c("SampleID" = "sampleID"))
+
+ggplot(tpm_long, aes(x = SampleID, y = log2(TPM + 1), fill = condition)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("normal" = "dodgerblue", "tumor" = "firebrick")) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Sample", y = "Log2(TPM + 1)", 
+       title = "TPM Distribution per Sample", fill = "Condition")
 
 
 #_______________________________________________________________________________
@@ -142,7 +177,7 @@ SwitchListAnalyzed <- isoformSwitchTestDEXSeq(
 
 extractSwitchSummary(SwitchListAnalyzed)
 
-#### 624 genes, 857 transcripts/isoforms & 772 switches 
+#### 475 genes, 773 transcripts/isoforms & 542 switches 
 
 summary(SwitchListAnalyzed)
 
@@ -217,7 +252,7 @@ summary(SwitchListAnalyzed)
 SwitchListAnalyzed <- analyzePFAM(
   switchAnalyzeRlist   = SwitchListAnalyzed,
   pathToPFAMresultFile = "switchanalyzer_output/pfam_results_galaxy.txt",
-  showProgress=FALSE)
+  showProgress=TRUE)
 
 head(SwitchListAnalyzed$isoformFeatures$isoform_id)
 
@@ -228,7 +263,7 @@ head(SwitchListAnalyzed$isoformFeatures$isoform_id)
 SwitchListAnalyzed <- analyzeIUPred2A(
   switchAnalyzeRlist        = SwitchListAnalyzed,
   pathToIUPred2AresultFile = "switchanalyzer_output/results_IUPred2A.txt",
-  showProgress = FALSE)
+  showProgress = TRUE)
 
 SwitchListAnalyzed
 
@@ -245,7 +280,7 @@ SwitchListAnalyzed <- analyzeSignalP(
 
 SwitchListAnalyzed <- analyzeAlternativeSplicing(
   switchAnalyzeRlist = SwitchListAnalyzed,
-  quiet=TRUE)
+  quiet=FALSE)
 
 table(SwitchListAnalyzed$AlternativeSplicingAnalysis$IR)
 
@@ -365,75 +400,3 @@ splicingEnrichment <- extractSplicingEnrichment(SwitchListAnalyzed,
 
 
 
-#################### PERFORM PCA FOR INITIAL QUALITY ANALYSIS ################
-
-################### Extract Abundance (TPM) ##########################
-pca_counts <- SwitchListFiltered$isoformRepExpression[, -1]
-rownames(pca_counts) <- SwitchListFiltered$isoformRepExpression$isoform_id
-
-################## Filter: top 25% most variable isoforms #########################
-row_vars <- apply(pca_counts, 1, var)
-pca_counts_filtered <- pca_counts[row_vars > quantile(row_vars, 0.75), ]
-
-################## Log Transform #########################
-log_data <- t(log2(pca_counts_filtered + 1))
-
-######################### Run PCA ###########################
-pca_analysis <- prcomp(log_data, scale. = FALSE, center = TRUE)
-
-############## Prepare data for plot ###################
-pca_df <- as.data.frame(pca_analysis$x)
-pca_df$SampleID <- rownames(pca_df)
-
-# Safe condition matching by SampleID
-pca_df$Condition <- SwitchListFiltered$designMatrix$condition[
-  match(pca_df$SampleID, SwitchListFiltered$designMatrix$sampleID)
-]
-
-################ PCA Plot #####################
-ggplot(pca_df, aes(x = PC1, y = PC2, color = Condition, label = SampleID)) +
-  geom_point(size = 4) +    
-  geom_text_repel(size = 3) +  
-  scale_color_manual(values = c("dodgerblue", "firebrick")) +
-  labs(
-    title = "PCA of Isoform Expression (TPM)",
-    x = sprintf("PC1 (%1.1f%%)", summary(pca_analysis)$importance[2,1] * 100),
-    y = sprintf("PC2 (%1.1f%%)", summary(pca_analysis)$importance[2,2] * 100),
-    color = "Condition"
-  ) +
-  theme_bw() +
-  theme(legend.position = "right")
-
-
-
-
-
-# Scree plot — how much variance each PC captures
-scree_df <- data.frame(
-  PC = 1:min(10, length(pca_analysis$sdev)),
-  Variance = summary(pca_analysis)$importance[2, 1:min(10, length(pca_analysis$sdev))] * 100
-)
-
-ggplot(scree_df, aes(x = PC, y = Variance)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  geom_line() + geom_point() +
-  labs(title = "Scree Plot", y = "% Variance Explained", x = "Principal Component") +
-  theme_bw()
-
-
-
-
-
-
-
-# Reshape to long format
-tpm_long <- pca_counts %>%
-  tibble::rownames_to_column("isoform_id") %>%
-  pivot_longer(cols = -isoform_id, names_to = "SampleID", values_to = "TPM")
-
-# Plot
-ggplot(tpm_long, aes(x = SampleID, y = log2(TPM + 1))) +
-  geom_boxplot() +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(x = "Sample", y = "Log2(TPM + 1)", title = "TPM Distribution per Sample")
