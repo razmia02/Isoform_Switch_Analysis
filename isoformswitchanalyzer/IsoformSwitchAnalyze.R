@@ -244,7 +244,7 @@ summary(SwitchListAnalyzed)
 
 SwitchListAnalyzed <- analyzeCPC2(
   switchAnalyzeRlist   = SwitchListAnalyzed,
-  pathToCPC2resultFile = "switchanalyzer_output/result_cpc2.txt",
+  pathToCPC2resultFile = "switchanalyzer_output/cpc_results.txt",
   removeNoncodinORFs   = TRUE)
 
 
@@ -255,7 +255,7 @@ summary(SwitchListAnalyzed)
 
 SwitchListAnalyzed <- analyzePFAM(
   switchAnalyzeRlist   = SwitchListAnalyzed,
-  pathToPFAMresultFile = "switchanalyzer_output/pfam_results_galaxy.txt",
+  pathToPFAMresultFile = "switchanalyzer_output/pfam_results.txt",
   showProgress=TRUE)
 
 head(SwitchListAnalyzed$isoformFeatures$isoform_id)
@@ -266,7 +266,7 @@ head(SwitchListAnalyzed$isoformFeatures$isoform_id)
 
 SwitchListAnalyzed <- analyzeIUPred2A(
   switchAnalyzeRlist        = SwitchListAnalyzed,
-  pathToIUPred2AresultFile = "switchanalyzer_output/results_IUPred2A.txt",
+  pathToIUPred2AresultFile = "switchanalyzer_output/IUPred_2A_result.txt",
   showProgress = TRUE)
 
 SwitchListAnalyzed
@@ -281,16 +281,29 @@ SwitchListAnalyzed <- analyzeSignalP(
 
 ################# Add DeepLoc2 Analysis ############################
 
-exampleSwitchListAnalyzed <- analyzeDeepLoc2(
-  switchAnalyzeRlist = exampleSwitchListAnalyzed,
-  pathToDeepLoc2resultFile = system.file("extdata/deeploc2.csv", package = "IsoformSwitchAnalyzeR"),
+deeploc_files <- c(
+  "switchanalyzer_output/DeepLoc_1.csv", 
+  "switchanalyzer_output/DeepLoc_2.csv",
+  "switchanalyzer_output/DeepLoc_3.csv", 
+  "switchanalyzer_output/DeepLoc_4.csv")
+
+SwitchListAnalyzed <- analyzeDeepLoc2(
+  switchAnalyzeRlist = SwitchListAnalyzed,
+  pathToDeepLoc2resultFile = deeploc_files,
   quiet = FALSE)
 
 ################### Add DeepTMHMM Analysis #########################
 
-exampleSwitchListAnalyzed <- analyzeDeepTMHMM(
-  switchAnalyzeRlist   = exampleSwitchListAnalyzed,
-  pathToDeepTMHMMresultFile = system.file("extdata/DeepTMHMM.gff3", package = "IsoformSwitchAnalyzeR"),
+deeptmhmm_files <- c(
+  "switchanalyzer_output/DeepTMHMM_1.gff3", 
+  "switchanalyzer_output/DeepTMHMM_2.gff3",
+  "switchanalyzer_output/DeepTMHMM_3.gff3",
+  "switchanalyzer_output/DeepTMHMM_4.gff3"
+)
+
+SwitchListAnalyzed <- analyzeDeepTMHMM(
+  switchAnalyzeRlist   = SwitchListAnalyzed,
+  pathToDeepTMHMMresultFile = deeptmhmm_files,
   showProgress=FALSE)
 
 #_______________________________________________________________________________
@@ -307,7 +320,9 @@ table(SwitchListAnalyzed$AlternativeSplicingAnalysis$IR)
 
 ####################### STEP-9: PREDICT SWITCH CONSEQUENCES ####################
 
-consequencesOfInterest <- c('intron_retention','coding_potential','NMD_status','domains_identified','ORF_seq_similarity')
+consequencesOfInterest <- c('intron_retention','coding_potential','NMD_status',
+                            'domains_identified','ORF_seq_similarity', 'domain_isotype', 
+                            'IDR_identified', 'IDR_type', 'signal_peptide_identified')
 
 SwitchListAnalyzed <- analyzeSwitchConsequences(
   SwitchListAnalyzed,
@@ -364,11 +379,11 @@ switchingIso <- extractTopSwitches(SwitchListAnalyzed,
                                    extractGenes = TRUE,  
                                    sortByQvals = TRUE)
 
-nrow(switchingIso) ### 437 genes have functional consequences switching
+nrow(switchingIso) ### 317 genes have functional consequences switching
 
 write.csv(switchingIso, "results/All_Switches.csv")
 
-subset(switchingIso, gene_name == 'CRTC1')
+subset(switchingIso, gene_name == 'PRX')
 
 
 #_______________________________________________________________________________
@@ -393,9 +408,11 @@ ggplot(data=SwitchListAnalyzed$isoformFeatures, aes(x=gene_log2_fold_change, y=d
 
 ############ Switch Plot for DIXDC1 gene ######################
 
-switchPlot(SwitchListAnalyzed, gene = 'CRTC1')
+switchPlot(SwitchListAnalyzed, gene = 'PRX')
 
-switchPlotIsoUsage(SwitchListAnalyzed, gene = 'CRTC1')
+switchPlot(SwitchListAnalyzed, gene = "LAMA2")
+
+switchPlotIsoUsage(SwitchListAnalyzed, gene = 'PRX')
 
 ########## Plot summarizing Alternative Splicing events ##################
 
