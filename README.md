@@ -19,7 +19,6 @@ The analysis is performed on NCBI GEO dataset and explores the expression profil
 ## Dataset
 
 The dataset for this analysis have been obtained from NCBI GEO with accession ID [GSE228870](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870).
-The dataset was subset to include 7 HCC samples & 7 matched normal thyroid samples. 
 
 ## Methodology 
 
@@ -66,10 +65,6 @@ The dataset was subset to include 7 HCC samples & 7 matched normal thyroid sampl
 - Tool: IsoformSwitchAnalyzeR
 
 ## Analytical Decisions & Rationale
-
-**Why 7 matched pairs instead of the full dataset?**
-
-The full dataset contains samples lacking matched normal controls. For isoform switch analysis, tumour-normal pairing is essential to study transcriptomic variation. Computational constraints also informed this decision. Only samples with confirmed matched pairs were retained, yielding 7 HCC and 7 normal thyroid samples.
 
 **Why Salmon over HISAT2 + featureCounts?**
 
