@@ -1,5 +1,8 @@
 # Isoform Switch Analysis in Hürthle Cell Carcinoma (HCC)
 
+[![Status](https://img.shields.io/badge/Analysis-In--Progress-orange.svg)]()
+> **Current Status:** Functional annotation steps (Pfam, DeepTMHMM) are currently running on the full dataset. Downstream isoform switch metrics are being integrated.
+
 ## Background & Motivation
 
 Hürthle cell carcinoma (HCC) is a subtype of thyroid cancer, accounting for 3-5% of all thyroid malignancies. HCC is characterised by an abundance of malfunctioning mitochondria and poor response to radioiodine therapy. While prior studies have documented mitochondrial complex I DNA mutations and metabolomic vulnerabilities in HCC, the transcriptomic landscape 
@@ -82,97 +85,8 @@ Standard DEG analysis (e.g. DESeq2 on gene-level counts) would not capture scena
 
 ## Results
 
-1. **Read Mapping & Sample Quality**
+This section will be updated once analysis is completed. 
 
-- Salmon automatically inferred the library type to be ISR (Inward, Stranded & Reverse). 
-
-- All samples had high mapping rate (above 90%) against the reference transcriptome. 
-
-2. **Sample Clustering**
-
-- Principal Component Analysis (PCA) showed that tissue condition (tumor vs normal) was the main driver of transcriptomic heterogeneity, with PC1 accounting for 28.3% of total variance. 
-
-- PC2 captured minor within-group heterogeneity. 
-
-![PCA Sample Clustering Plot](isoformswitchanalyzer/Plots/PCA_Plot.png)
-
-3. **Isoform Analysis & Switch Consequences**
-
-- Differential splicing analysis identified 808 significant isoform switches in 658 distinct genes, involving 911 isoforms. 
-
-- After filtering for functional consequences, 452 genes had 578 isoform switches that were known to cause functional consequences including intron retention, NMD, and structural modifications.
-
-4. **Top Significant Switching Genes**
-
-- GAB2, DIXDC1, CRTC1 & CRB3 were the most heavily altered genes. 
-
-- Global alternative splicing mechanisms showed that 548 isoforms contain single intron retention (IR), while 143 isoforms contained multiple IR. 
-
-5. **Functional Consequence Profiling**
-
-- Functional consequence analysis showed that tumor upregulated isoforms alter the transcript’s coding potential and ORF structure. 
-
-- Analysis showed balanced rate of intron retention and intron gain while small subset of switches resulted in altered NMD sensitivity. 
-![Functional Consequence Summary Plot](isoformswitchanalyzer/Plots/Consequnce_Summary.png)
-
-6. **Alternative Splicing & Genome-Wide Enrichment**
-
-- Analysis of alternative splicing events showed that alternative transcription start site (ATSS) and alternative transcription termination sites (ATTS) are the main events driving isoform variation within tumor samples. 
-
-- Genome-wide splicing enrichment analysis identified that transcripts undergoing ATSS and ATTS events showed a significant enrichment toward "gain" features, indicating preferential usage of alternative upstream initiation and downstream termination coordinates in tumor tissue.  
-
-![Alternative Splicing Distribution Plot](isoformswitchanalyzer/Plots/Alternative_Transcription_Events.png)
-
-
-**Detailed Results for DIXDC1 gene**
-
-The most significant isoform switch within DIXDC1 genes shows that longer, protein-coding transcript ENST00000440460.7 in tumor samples, while the transcript ENST00000618522.4 is suppressed in tumor samples. While gene expression remains almost the same in tumor and normal samples, individual transcripts showed that upregulated tumor isoform gained intrinsically disordered region (IDR). This altered isoform expression suggests a role of this isoform in HCC profile. 
-
-![DIXDC1 Switch Plot](isoformswitchanalyzer/Plots/Switch_Plot_DIXDC1.png)
-
-## Interpretation 
-
-The dominance of ATSS and ATTS events as the primary drivers of isoform variation in HCC tumour samples is a notable finding. These events alter which promoter regions are utilised and where transcription terminates, potentially placing transcripts under different regulatory controls or producing proteins with altered N- or C-terminal domains. Whether this pattern reflects broader dysregulation of transcriptional machinery in HCC, or is specific to the mitochondrial-rich tumour microenvironment of this cancer type, is an open question this analysis cannot resolve but warrants further investigation.
-
-A balanced rate of NMD gain and loss across switching events was unexpected. A bias toward NMD gain would suggest tumour cells are selectively degrading certain transcripts; a bias toward loss would suggest escape from surveillance. The balanced pattern may reflect heterogeneous switching across tumour samples rather than a coordinated programme, though this remains uncharacterised.
-
-
-## Limitations
-
-1. **Absence of Decoy Sequences in Transcript Quantification**
-
-Transcript-level abundance estimation using Salmon was performed without incorporating a selective-alignment decoy index. This potentially increases the rate of false-positive multi-mapping reads, particularly from genomic regions with high sequence homology or unannotated pseudogenes.
-
-2. **Lack of Protein Domain Structural Integration**
-
-Downstream functional consequence analysis utilizing IsoformSwitchAnalyzeR was conducted without integrating external topological or protein domain annotation databases. Consequently, while macro-structural changes like ORF lengths and IDRs were captured, localized disruptions to specific functional or catalytic protein domains remain uncharacterized.
-
-**Future directions:** Integrating decoy-aware Salmon indexing to reduce false-positive multi-mapping, adding protein domain annotation via Pfam or SignalP within IsoformSwitchAnalyzeR, and cross-referencing the top switching genes against known 
-HCC driver mutations would each meaningfully extend this analysis.
-
-## Repository Structure 
-```
-Isoform_Switch_Analysis/
-├── salmon_quant/                # Main directory for performing Salmon Quantification
-│   ├── data/                    # Accession List for selected samples
-│   ├── fastp_output/            # For fastp.json files
-│   ├── fastqc/                  # For fastqc reports
-│   ├── multiqc/                 # For multiqc report
-│   ├── salmon_output/           # Contains salmon quant.sf files for each sample
-│   └── scripts/                 # Scripts for getting data, initial QC & salmon quantification
-│
-└── isoformswitchanalyzer/       # Directory containing isoformswitchanalyzer
-    ├── Plots/                   # Directory for Plots (from isoformswitchanalyzer)
-    ├── results/                 # Directory for saving tabular results
-    ├── switchanalyzer_output/   # Contains fasta files obtained from isoformswitchanalyzer
-    ├── IsoformSwitchAnalyze.R   # R script for IsoformSwitchAnalyzeR
-    ├── metadata.csv             # CSV file for selected samples & their condition
-    ├── isoformswitchanalyzer.Rproj # R project
-└── Readme.md                # Readme.md file
-└── env.yaml               # Conda env for salmon
-└── r_session_info.txt     # R package versions
-
-```
 
 ## References
 - [GEO DATASET](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)

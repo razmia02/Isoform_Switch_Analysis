@@ -1,5 +1,6 @@
 salmon_quant/downstream_analysis/
 salmon_quant/ref_files/
+Paper/
 .RDataTmp
 .RData
 .Rhistory
