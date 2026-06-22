@@ -3,9 +3,9 @@
 "2","geneComp_00021956","LAMA2","LAMA2","normal","tumor",3.97613876874115e-21,TRUE,2
 "3","geneComp_00024247","MAD2L2","MAD2L2","normal","tumor",1.69874506014878e-18,TRUE,3
 "4","geneComp_00024501","MBD6","MBD6","normal","tumor",6.0661825754314e-18,TRUE,4
-"5","geneComp_00024125","LSP1","LSP1","normal","tumor",6.33416245798261e-17,TRUE,5
-"6","geneComp_00017834","FBLN2","FBLN2","normal","tumor",6.54316016874105e-17,TRUE,6
-"7","geneComp_00020498","IFT27","IFT27","normal","tumor",1.40928843331374e-16,TRUE,7
-"8","geneComp_00025010","MLLT1","MLLT1","normal","tumor",1.12760724597276e-15,TRUE,8
-"9","geneComp_00002196","BSG","BSG","normal","tumor",2.80495948960522e-15,TRUE,9
-"10","geneComp_00017225","ERCC1","ERCC1","normal","tumor",2.80495948960522e-15,TRUE,10
+"5","geneComp_00017835","FBLN5","FBLN5","normal","tumor",4.12111647030179e-17,TRUE,5
+"6","geneComp_00022179","LIG4","LIG4","normal","tumor",6.33416245798261e-17,TRUE,6
+"7","geneComp_00024125","LSP1","LSP1","normal","tumor",6.33416245798261e-17,TRUE,7
+"8","geneComp_00017834","FBLN2","FBLN2","normal","tumor",6.54316016874105e-17,TRUE,8
+"9","geneComp_00020498","IFT27","IFT27","normal","tumor",1.40928843331374e-16,TRUE,9
+"10","geneComp_00025010","MLLT1","MLLT1","normal","tumor",1.12760724597276e-15,TRUE,10

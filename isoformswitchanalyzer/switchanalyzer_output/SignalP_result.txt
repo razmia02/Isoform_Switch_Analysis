@@ -1,4 +1,4 @@
-# SignalP-5.0	Organism: Eukarya	Timestamp: 20260617193323
+# SignalP-5.0	Organism: Eukarya	Timestamp: 20260622193257
 # ID	Prediction	SP(Sec/SPI)	OTHER	CS Position
 ENST00000000442.11	OTHER	0.002578	0.997422	
 ENST00000002125.9	OTHER	0.024782	0.975218	
