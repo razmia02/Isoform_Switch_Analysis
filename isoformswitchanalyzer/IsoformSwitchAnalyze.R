@@ -16,6 +16,7 @@ library(ggrepel)
 library(tidyr)
 library(dplyr)
 
+
 packageVersion('IsoformSwitchAnalyzeR') ### Check the package version
 
 getwd()
@@ -42,9 +43,10 @@ View(metadata)
 ##################### Create Design Matrix ################################
 
 myDesign <- data.frame(
-  sampleID = colnames(salmonQuant$abundance)[-1],
-  condition = metadata$condition[match(colnames(salmonQuant$abundance)[-1]
-                                       , metadata$sample)])
+  sampleID  = colnames(salmonQuant$abundance)[-1],
+  condition = metadata$condition[match(colnames(salmonQuant$abundance)[-1], metadata$sample)],
+  patient   = metadata$patient_id[match(colnames(salmonQuant$abundance)[-1], metadata$sample)] 
+)
 
 ######### Use the match function to assign correct conditions #############
 
@@ -118,22 +120,30 @@ pca_df$SampleID <- rownames(pca_df)
 
 ######### Matching sample condition & sampleID ###################
 
-pca_df$Condition <- SwitchListFiltered$designMatrix$condition[
+pca_df$condition <- SwitchListFiltered$designMatrix$condition[
   match(pca_df$SampleID, SwitchListFiltered$designMatrix$sampleID)]
+
+pca_df$patient <- SwitchListFiltered$designMatrix$patient[
+  match(pca_df$SampleID, SwitchListFiltered$designMatrix$sampleID)]
+
 
 ################ PCA Plot #####################
 
-ggplot(pca_df, aes(x = PC1, y = PC2, color = Condition, label = SampleID)) +
+ggplot(pca_df, aes(x = PC1, y = PC2, color = condition)) +
+  # Keep the points completely standard and clean
   geom_point(size = 4) +    
-  geom_text_repel(size = 3) +  
-  scale_color_manual(values = c("dodgerblue", "firebrick")) +
+  
+  # Crucial: Use the patient column (HC001, HC002) for the text labels instead of SampleID
+  geom_text_repel(aes(label = patient), size = 2, fontface = "bold", color = "gray20") +  
+  
+  # Your original high-contrast colors
+  scale_color_manual(values = c("normal" = "dodgerblue", "tumor" = "firebrick")) +
+  
   labs(title = "PCA of Isoform Expression (TPM)",
-    x = sprintf("PC1 (%1.1f%%)", summary(pca_analysis)$importance[2,1] * 100),
-    y = sprintf("PC2 (%1.1f%%)", summary(pca_analysis)$importance[2,2] * 100),
-    color = "Condition") +
-  theme_bw() +
-  theme(legend.position = "right")
-
+       x = sprintf("PC1 (%1.1f%%)", summary(pca_analysis)$importance[2,1] * 100),
+       y = sprintf("PC2 (%1.1f%%)", summary(pca_analysis)$importance[2,2] * 100),
+       color = "Condition") + 
+  theme_bw()
 
 
 ########### Scree plot — how much variance each PC captures ###################
@@ -160,7 +170,7 @@ tpm_long <- tpm_long %>%
   left_join(SwitchListFiltered$designMatrix[, c("sampleID", "condition")],
     by = c("SampleID" = "sampleID"))
 
-ggplot(tpm_long, aes(x = SampleID, y = log2(TPM + 1), fill = condition)) +
+ggplot(tpm_long, aes(x = reorder(SampleID, condition), y = log2(TPM + 1), fill = condition)) +
   geom_boxplot() +
   scale_fill_manual(values = c("normal" = "dodgerblue", "tumor" = "firebrick")) +
   theme_bw() +
@@ -182,7 +192,7 @@ SwitchListAnalyzed <- isoformSwitchTestDEXSeq(
 
 extractSwitchSummary(SwitchListAnalyzed)
 
-#### 475 genes, 773 transcripts/isoforms & 542 switches 
+#### 420 genes, 676 transcripts/isoforms & 464 switches 
 
 summary(SwitchListAnalyzed)
 
@@ -328,7 +338,7 @@ table(SwitchListAnalyzed$AlternativeSplicingAnalysis$IR)
 SwitchListAnalyzed <- analyzeSwitchConsequences(
   SwitchListAnalyzed,
   consequencesToAnalyze = "all", 
-  dIFcutoff = 0.1,
+  dIFcutoff = 0.05,
   showProgress=TRUE)
 
 
@@ -337,6 +347,12 @@ extractSwitchSummary(SwitchListAnalyzed, filterForConsequences = FALSE)
 extractSwitchSummary(SwitchListAnalyzed, filterForConsequences = TRUE)
 
 extractConsequenceSummary(SwitchListAnalyzed)
+
+summary(abs(SwitchListAnalyzed$isoformSwitchAnalysis$dIF))
+
+SwitchListAnalyzed
+
+table(SwitchListAnalyzed$isoformFeatures$switchConsequence)
 
 #_______________________________________________________________________________
 
@@ -527,117 +543,3 @@ grid.newpage() ; grid.draw(myVenn)
 
 
 
-library(dplyr)
-
-salmon_dir <- "D:/Projects/Isoform_Switching/salmon_output/quant_files"
-
-# Find all quant.sf files
-quant_files <- list.files(salmon_dir, 
-                          pattern = "quant.sf", 
-                          recursive = TRUE, 
-                          full.names = TRUE)
-
-# Extract total counts per sample as a proxy
-count_summary <- lapply(quant_files, function(f) {
-  df <- read.table(f, header = TRUE, sep = "\t")
-  sample_name <- basename(dirname(f))
-  data.frame(
-    sample        = sample_name,
-    total_counts  = sum(df$NumReads),
-    num_transcripts_detected = sum(df$NumReads > 0)
-  )
-}) %>% bind_rows()
-
-print(count_summary)
-
-
-
-# Add condition from metadata
-count_summary$condition <- metadata$condition[
-  match(count_summary$sample, metadata$sample)]
-
-# ── Plot 1: Total Mapped Counts per Sample ────────────────────────────────────
-
-ggplot(count_summary, aes(x = reorder(sample, total_counts), 
-                          y = total_counts / 1e6,  # convert to millions
-                          fill = condition)) +
-  geom_bar(stat = "identity", width = 0.7) +
-  geom_text(aes(label = sprintf("%.1fM", total_counts / 1e6)),
-            hjust = -0.1, size = 3) +
-  scale_fill_manual(values = c("normal" = "dodgerblue", 
-                               "tumor"  = "firebrick")) +
-  scale_y_continuous(limits = c(0, max(count_summary$total_counts/1e6) * 1.15),
-                     expand = c(0, 0)) +
-  coord_flip() +
-  labs(
-    title   = "Total Mapped Read Counts per Sample",
-    x       = NULL,
-    y       = "Total Mapped Reads (Millions)",
-    fill    = "Condition"
-  ) +
-  theme_bw() +
-  theme(plot.title = element_text(face = "bold"),
-        axis.text.y = element_text(size = 9))
-
-ggsave("results/total_mapped_counts.png", width = 8, height = 6, dpi = 300)
-
-# ── Plot 2: Number of Transcripts Detected per Sample ─────────────────────────
-
-ggplot(count_summary, aes(x = reorder(sample, num_transcripts_detected), 
-                          y = num_transcripts_detected / 1000,  # convert to thousands
-                          fill = condition)) +
-  geom_bar(stat = "identity", width = 0.7) +
-  geom_text(aes(label = sprintf("%.1fK", num_transcripts_detected / 1000)),
-            hjust = -0.1, size = 3) +
-  scale_fill_manual(values = c("normal" = "dodgerblue", 
-                               "tumor"  = "firebrick")) +
-  scale_y_continuous(limits = c(0, max(count_summary$num_transcripts_detected/1000) * 1.15),
-                     expand = c(0, 0)) +
-  coord_flip() +
-  labs(
-    title   = "Number of Transcripts Detected per Sample",
-    x       = NULL,
-    y       = "Transcripts Detected (Thousands)",
-    fill    = "Condition"
-  ) +
-  theme_bw() +
-  theme(plot.title = element_text(face = "bold"),
-        axis.text.y = element_text(size = 9))
-
-ggsave("results/transcripts_detected.png", width = 8, height = 6, dpi = 300)
-
-# ── Plot 3: Both metrics combined in one figure ───────────────────────────────
-
-library(tidyr)
-
-count_long <- count_summary %>%
-  mutate(
-    `Mapped Reads (M)`        = total_counts / 1e6,
-    `Transcripts Detected (K)` = num_transcripts_detected / 1000
-  ) %>%
-  select(sample, condition, `Mapped Reads (M)`, `Transcripts Detected (K)`) %>%
-  pivot_longer(cols = c(`Mapped Reads (M)`, `Transcripts Detected (K)`),
-               names_to = "metric", values_to = "value")
-
-ggplot(count_long, aes(x = reorder(sample, value), 
-                       y = value, 
-                       fill = condition)) +
-  geom_bar(stat = "identity", width = 0.7) +
-  scale_fill_manual(values = c("normal" = "dodgerblue", 
-                               "tumor"  = "firebrick")) +
-  facet_wrap(~ metric, scales = "free_x") +  # free scales since units differ
-  coord_flip() +
-  labs(
-    title = "Salmon Quantification QC Metrics",
-    x     = NULL,
-    y     = "Value",
-    fill  = "Condition"
-  ) +
-  theme_bw() +
-  theme(
-    plot.title  = element_text(face = "bold"),
-    strip.text  = element_text(face = "bold"),
-    axis.text.y = element_text(size = 8)
-  )
-
-ggsave("results/salmon_qc_combined.png", width = 10, height = 6, dpi = 300)

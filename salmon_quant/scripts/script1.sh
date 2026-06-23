@@ -13,7 +13,7 @@ mkdir data fastqc salmon_output scripts ref_files
 
 data=~/salmon_quant/data
 process_data=~/salmon_quant/data/processed_reads
-acc_list=/mnt/d/Projects/Isoform_Switching/SRR_Acc_List.txt
+acc_list=/mnt/d/Projects/Isoform_Switching/SRR_Acc_List_Updated.txt
 ref_files=~/salmon_quant/ref_files
 fastqc=~/salmon_quant/fastqc
 fastp=~/salmon_quant/fastp_output
@@ -68,9 +68,9 @@ wget -P ${ref_files} https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/r
 
 #################### NCBI GEO DATASETID = GSE228870 (https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870)
 
-################### 7 control & 7 tumor samples have been used for this project ##############################
+################### 18 control & 18 tumor samples have been used for this project ##############################
 
-############## The list of accessions used are in txt file (SRR_Acc_List.txt) ##########################
+############## The list of accessions used are in txt file (SRR_Acc_List_Updated.txt) ##########################
 
 ################# Download the file ##########################
 
@@ -120,9 +120,19 @@ echo "Fastp Complete!"
  
 ################################################ STEP-4: SALMON INDEX ############################################################
 
+
+########## Extract genes from genome file to extract decoys ##################
+
+zgrep ">" ${ref_files}/GRCh38.p14.genome.fa.gz | awk '{print $1}' | sed -e 's/>//' > ${ref_files}/decoys.txt
+
+############### Concatenate genome and transcriptome togather ######################
+
+cat ${ref_files}/gencode.v44.transcripts.fa.gz ${ref_files}/GRCh38.p14.genome.fa.gz > ${ref_files}/gentrome.fa.gz
+
+
 echo "Starting Index"
 
-salmon index -t ${ref_files}/gencode.v44.transcripts.fa.gz -i ${ref_files}/salmon_index -k 31 --gencode
+salmon index -t ${ref_files}/gentrome.fa.gz -i ${ref_files}/salmon_index_decoy -k 31 --decoys ${ref_files}/decoys.txt -p 4
 
 echo "Index Complete!"
 
@@ -132,7 +142,7 @@ echo "Index Complete!"
 
 echo "Salmon Quantification"
 
-salmon quant -i ${ref_files}/salmon_index -l A \
+salmon quant -i ${ref_files}/salmon_index_decoy -l A \
         -1 ${process_data}/SRR24053380_1.fastq.gz -2 ${process_data}/SRR24053380_2.fastq.gz  \
         -o ${salmon_output}/SRR24053380_trans_quant --validateMappings
 
@@ -140,7 +150,9 @@ echo "Quantification Complete!"
 
 cat ${salmon_output}/SRR24053380_trans_quant/logs/salmon_quant.log | grep "Mapping rate" ######### Check the mapping rate
 
-mv ${salmon_output}/SRR24053380_trans_quant/quant.sf ${salmon_output}/SRR24053380_trans_quant/SRR24053380_quant.sf ######### Rename quant.sf file
+mkdir -p ${salmon_output}/quant_files/SRR24053380
+
+mv ${salmon_output}/SRR24053380_trans_quant/quant.sf ${salmon_output}/quant_files/SRR24053380/quant.sf ######### Rename quant.sf file
 
 echo "Process Completed!"
 
@@ -153,7 +165,7 @@ zgrep ">" ${ref_files}/gencode.v44.transcripts.fa.gz | head -n 1 | cut -d'|' -f1
 # Get the same transcript from the GTF
 zgrep "ENST00000456328" ${ref_files}/gencode.v44.annotation.gtf.gz | head -n 1 | grep -o "transcript_id \"[^\"]*\""
 
-grep "ENST00000456328" ${salmon_output}/SRR24053380_trans_quant/SRR24053380_quant.sf
+grep "ENST00000456328" ${salmon_output}/quant_files/SRR24053380/quant.sf
 
 #################################### quant.sf files will be used for further analysis #############################################
 
