@@ -334,9 +334,24 @@ table(SwitchListAnalyzed$AlternativeSplicingAnalysis$IR)
 ####################### STEP-9: PREDICT SWITCH CONSEQUENCES ####################
 
 ?analyzeSwitchConsequences
+
+consequencesOfInterest <- c(
+  'intron_retention',
+  'coding_potential',
+  'NMD_status',
+  'domains_identified',
+  'domain_isotype',
+  'ORF_seq_similarity',
+  'IDR_identified',
+  'IDR_type',
+  'signal_peptide_identified',
+  'sub_cell_location',
+  'isoform_topology')
+
+
 SwitchListAnalyzed <- analyzeSwitchConsequences(
   SwitchListAnalyzed,
-  consequencesToAnalyze = "all", 
+  consequencesToAnalyze = consequencesOfInterest, 
   dIFcutoff = 0.1,
   showProgress=TRUE)
 
@@ -351,7 +366,7 @@ summary(abs(SwitchListAnalyzed$isoformSwitchAnalysis$dIF))
 
 SwitchListAnalyzed
 
-table(SwitchListAnalyzed$isoformFeatures$switchConsequence)
+
 
 #_______________________________________________________________________________
 
@@ -427,7 +442,8 @@ best_candidates <- SwitchListAnalyzed$isoformFeatures %>%
   filter(
     !is.na(isoform_switch_q_value),
     isoform_switch_q_value < 0.05,
-    abs(dIF) > 0.1
+    abs(dIF) > 0.1,
+    switchConsequencesGene == TRUE
   ) %>%
   # Keep only isoforms with at least one functional consequence
   filter(
@@ -444,7 +460,8 @@ best_candidates <- SwitchListAnalyzed$isoformFeatures %>%
   arrange(isoform_switch_q_value, desc(abs(dIF))) %>%
   select(gene_name, isoform_id, dIF, isoform_switch_q_value,
          domain_identified, idr_identified,
-         signal_peptide_identified, PTC, sub_cell_location)
+         signal_peptide_identified, PTC, sub_cell_location,
+         switchConsequencesGene)
 
 head(best_candidates, 20)
 
@@ -478,7 +495,11 @@ switchPlot(SwitchListAnalyzed, gene = "MAD2L2")
 
 switchPlot(SwitchListAnalyzed, gene = "GAB2")
 
-switchPlot(SwitchListAnalyzed, gene = "CKMT1A")
+switchPlot(SwitchListAnalyzed, gene = "LSP1")
+
+switchPlot(SwitchListAnalyzed, gene = "FBLN2")
+
+switchPlot(SwitchListAnalyzed, gene = "APOD")
 
 ########## Plot summarizing Alternative Splicing events ##################
 
@@ -507,56 +528,70 @@ extractSplicingGenomeWide(
 
 ##### Analyze the biological mechanisms ###########
 
-bioMechanismeAnalysis <- SwitchListAnalyzed$switchConsequence %>%
-  filter(isoformsDifferent == TRUE,
-         featureCompared %in% c('tss', 'tts', 'intron_structure'))
+bioMechanismeAnalysis <- analyzeSwitchConsequences(
+  SwitchListAnalyzed, 
+  consequencesToAnalyze = c('tss','tts','intron_structure'),
+  showProgress = FALSE)$switchConsequence # only the consequences are interesting here
 
 
-### Extract the consequences of interest already stored in the switchAnalyzeRlist
+########### Verify ###############
 
-myConsequences <- SwitchListAnalyzed$switchConsequence
+table(mechanismAnalysis$featureCompared)
 
-myConsequences <- myConsequences[which(myConsequences$isoformsDifferent),]
+######### Get switches WITH functional consequences ###############
 
-myConsequences$isoPair <- paste(myConsequences$isoformUpregulated, myConsequences$isoformDownregulated) # id for specific iso comparison
+switchesWithConsequences <- SwitchListAnalyzed$isoformFeatures %>%
+  filter(!is.na(isoform_switch_q_value),
+         isoform_switch_q_value < qvalue_cutoff,
+         abs(dIF) > dif_cutoff,
+         switchConsequencesGene == TRUE)
 
+cat("Switches with consequences:", nrow(switchesWithConsequences), "\n")
 
-### Obtain the mechanisms of the isoform switches with consequences
+############ Create isoPair ID #############
 
-bioMechanismeAnalysis$isoPair <- paste(bioMechanismeAnalysis$isoformUpregulated, bioMechanismeAnalysis$isoformDownregulated)
+mechanismAnalysis$isoPair <- paste(
+  mechanismAnalysis$isoformUpregulated,
+  mechanismAnalysis$isoformDownregulated,
+  sep = "_vs_")
 
-bioMechanismeAnalysis <- bioMechanismeAnalysis[which(bioMechanismeAnalysis$isoPair %in% myConsequences$isoPair),]  # id for specific iso comparison
+########### Filter mechanisms to only consequence-bearing switches ###########
 
+bioMechanismeAnalysis <- mechanismAnalysis %>%
+  filter(
+    isoformsDifferent == TRUE,
+    isoformUpregulated  %in% switchesWithConsequences$isoform_id |
+      isoformDownregulated %in% switchesWithConsequences$isoform_id)
 
+############ Verify counts before plotting #################
 
-### Create list with the isoPair ids for each consequence
+cat("AS events:",   sum(bioMechanismeAnalysis$featureCompared == 'intron_structure'), "\n")
 
-AS   <- bioMechanismeAnalysis$isoPair[ which( bioMechanismeAnalysis$featureCompared == 'intron_structure')]
-aTSS <- bioMechanismeAnalysis$isoPair[ which( bioMechanismeAnalysis$featureCompared == 'tss'             )]
-aTTS <- bioMechanismeAnalysis$isoPair[ which( bioMechanismeAnalysis$featureCompared == 'tts'             )]
+cat("aTSS events:", sum(bioMechanismeAnalysis$featureCompared == 'tss'), "\n")
 
-mechList <- list(
-  AS=AS,
-  aTSS=aTSS,
-  aTTS=aTTS
-)
+cat("aTTS events:", sum(bioMechanismeAnalysis$featureCompared == 'tts'), "\n")
 
-### Create Venn diagram
+############ Venn diagram ###################
+
+AS   <- bioMechanismeAnalysis$isoPair[bioMechanismeAnalysis$featureCompared == 'intron_structure']
+
+aTSS <- bioMechanismeAnalysis$isoPair[bioMechanismeAnalysis$featureCompared == 'tss']
+
+aTTS <- bioMechanismeAnalysis$isoPair[bioMechanismeAnalysis$featureCompared == 'tts']
+
+mechList <- list(AS = AS, aTSS = aTSS, aTTS = aTTS)
 
 
 myVenn <- venn.diagram(
-  x = mechList,
-  col='transparent',
-  alpha=0.4,
-  fill=RColorBrewer::brewer.pal(n=3,name='Dark2'),
-  filename=NULL
-)
+  x        = mechList,
+  col      = 'transparent',
+  alpha    = 0.4,
+  fill     = RColorBrewer::brewer.pal(n = 3, name = 'Dark2'),
+  filename = NULL)
 
-### Plot the venn diagram
-grid.newpage() ; grid.draw(myVenn)
-
+grid.newpage()
+grid.draw(myVenn)
 
 
-
-
+######################## END OF ANALYSIS ####################################
 
