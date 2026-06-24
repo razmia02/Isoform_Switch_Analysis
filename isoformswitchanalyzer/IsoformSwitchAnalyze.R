@@ -15,6 +15,7 @@ library(ggplot2)
 library(ggrepel)
 library(tidyr)
 library(dplyr)
+library(VennDiagram)
 
 
 packageVersion('IsoformSwitchAnalyzeR') ### Check the package version
@@ -184,7 +185,7 @@ ggplot(tpm_long, aes(x = reorder(SampleID, condition), y = log2(TPM + 1), fill =
 ######################## STEP-3: IDENTIFY ISOFORM SWITCHES ##################
 
 ?isoformSwitchTestDEXSeq
-
+set.seed(42)
 SwitchListAnalyzed <- isoformSwitchTestDEXSeq(
   switchAnalyzeRlist = SwitchListFiltered,
   reduceToSwitchingGenes=TRUE)
@@ -299,8 +300,7 @@ SwitchListAnalyzed <- analyzeSignalP(
 deeploc_files <- c(
   "switchanalyzer_output/DeepLoc_1.csv", 
   "switchanalyzer_output/DeepLoc_2.csv",
-  "switchanalyzer_output/DeepLoc_3.csv", 
-  "switchanalyzer_output/DeepLoc_4.csv")
+  "switchanalyzer_output/DeepLoc_3.csv")
 
 SwitchListAnalyzed <- analyzeDeepLoc2(
   switchAnalyzeRlist = SwitchListAnalyzed,
@@ -312,8 +312,7 @@ SwitchListAnalyzed <- analyzeDeepLoc2(
 deeptmhmm_files <- c(
   "switchanalyzer_output/DeepTMHMM_1.gff3", 
   "switchanalyzer_output/DeepTMHMM_2.gff3",
-  "switchanalyzer_output/DeepTMHMM_3.gff3",
-  "switchanalyzer_output/DeepTMHMM_4.gff3")
+  "switchanalyzer_output/DeepTMHMM_3.gff3")
 
 SwitchListAnalyzed <- analyzeDeepTMHMM(
   switchAnalyzeRlist   = SwitchListAnalyzed,
@@ -338,7 +337,7 @@ table(SwitchListAnalyzed$AlternativeSplicingAnalysis$IR)
 SwitchListAnalyzed <- analyzeSwitchConsequences(
   SwitchListAnalyzed,
   consequencesToAnalyze = "all", 
-  dIFcutoff = 0.05,
+  dIFcutoff = 0.1,
   showProgress=TRUE)
 
 
@@ -422,6 +421,33 @@ write.csv(significantSwitches, "results/significant_switches_filtered.csv", row.
 
 View(significantSwitches)
 
+
+# Get all switches with consequences, sorted by q-value
+best_candidates <- SwitchListAnalyzed$isoformFeatures %>%
+  filter(
+    !is.na(isoform_switch_q_value),
+    isoform_switch_q_value < 0.05,
+    abs(dIF) > 0.1
+  ) %>%
+  # Keep only isoforms with at least one functional consequence
+  filter(
+    domain_identified == "yes" |
+      !is.na(signal_peptide_identified) & signal_peptide_identified != "no" |
+      PTC == TRUE |
+      idr_identified == "yes"
+  ) %>%
+  # Take the most significant isoform per gene
+  group_by(gene_name) %>%
+  slice_min(order_by = isoform_switch_q_value, n = 1) %>%
+  ungroup() %>%
+  # Sort by combined strength: q-value and effect size
+  arrange(isoform_switch_q_value, desc(abs(dIF))) %>%
+  select(gene_name, isoform_id, dIF, isoform_switch_q_value,
+         domain_identified, idr_identified,
+         signal_peptide_identified, PTC, sub_cell_location)
+
+head(best_candidates, 20)
+
 #_______________________________________________________________________________
 
 ######################## STEP-11: VISUALIZATION ###############################
@@ -445,16 +471,14 @@ ggplot(data = SwitchListAnalyzed$isoformFeatures,
 
 ############ Switch Plot for the most significant gene ################
 
-switchPlot(SwitchListAnalyzed, gene = 'PRX')
 
 switchPlot(SwitchListAnalyzed, gene = "LAMA2")
 
 switchPlot(SwitchListAnalyzed, gene = "MAD2L2")
 
-switchPlot(SwitchListAnalyzed, gene = "FBLN5")
+switchPlot(SwitchListAnalyzed, gene = "GAB2")
 
-switchPlot(SwitchListAnalyzed, gene = "FBLN2")
-
+switchPlot(SwitchListAnalyzed, gene = "CKMT1A")
 
 ########## Plot summarizing Alternative Splicing events ##################
 
@@ -472,11 +496,10 @@ splicingEnrichment <- extractSplicingEnrichment(SwitchListAnalyzed,
 
 extractSplicingGenomeWide(
   SwitchListAnalyzed,
-  featureToExtract = 'all',                 # all isoforms stored in the switchAnalyzeRlist
-  splicingToAnalyze = c('A3','MES','ATSS'), 
+  featureToExtract = 'all',
+  splicingToAnalyze = "all", 
   plot=TRUE,
-  returnResult=FALSE  
-)
+  returnResult=FALSE)
 
 
 
@@ -484,16 +507,9 @@ extractSplicingGenomeWide(
 
 ##### Analyze the biological mechanisms ###########
 
-bioMechanismeAnalysis <- analyzeSwitchConsequences(
-  SwitchListAnalyzed, 
-  consequencesToAnalyze = c('tss','tts','intron_structure'),
-  showProgress = FALSE
-)$switchConsequence # only the consequences are interesting here
-
-
-####### Subset to those with differences #########
-
-bioMechanismeAnalysis <- bioMechanismeAnalysis[which(bioMechanismeAnalysis$isoformsDifferent),]
+bioMechanismeAnalysis <- SwitchListAnalyzed$switchConsequence %>%
+  filter(isoformsDifferent == TRUE,
+         featureCompared %in% c('tss', 'tts', 'intron_structure'))
 
 
 ### Extract the consequences of interest already stored in the switchAnalyzeRlist
@@ -526,7 +542,7 @@ mechList <- list(
 )
 
 ### Create Venn diagram
-library(VennDiagram)
+
 
 myVenn <- venn.diagram(
   x = mechList,
@@ -538,6 +554,7 @@ myVenn <- venn.diagram(
 
 ### Plot the venn diagram
 grid.newpage() ; grid.draw(myVenn)
+
 
 
 
