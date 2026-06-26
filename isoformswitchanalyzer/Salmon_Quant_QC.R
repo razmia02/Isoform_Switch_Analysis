@@ -75,6 +75,11 @@ print(count_summary)
 
 ########### Add condition from metadata ################
 
+metadata <- read.csv("D:/Projects/Isoform_Switching/Paper/Supplementary_Table_1.csv")
+
+print(metadata)
+
+
 count_summary$condition <- metadata$condition[
   match(count_summary$sample, metadata$sample)]
 
@@ -232,6 +237,8 @@ combined_long <- combined_qc %>%
                                             "Mapped Reads (M)", 
                                             "Transcripts Detected (K)")))
 
+write.csv(combined_long, "results/combined_qc_metrics.csv")
+
 ############# Plot all three metrics combined ################
 
 ggplot(combined_long, aes(x = reorder(sample, value), 
@@ -281,4 +288,5 @@ ggplot(combined_long, aes(x = reorder(sample, value),
     panel.spacing   = unit(1, "lines"),  # space between panels
     plot.caption    = element_text(color = "gray50")
   )
+
 

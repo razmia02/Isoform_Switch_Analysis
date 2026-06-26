@@ -18,7 +18,11 @@ library(dplyr)
 library(VennDiagram)
 
 
+
+
 packageVersion('IsoformSwitchAnalyzeR') ### Check the package version
+
+BiocManager::version()
 
 getwd()
 
@@ -70,6 +74,7 @@ head(aSwitchList$isoformFeatures,2)
 head(aSwitchList$exons,2)
 
 head(aSwitchList$ntSequence,2)
+
 
 
 #_______________________________________________________________________________
@@ -185,7 +190,7 @@ ggplot(tpm_long, aes(x = reorder(SampleID, condition), y = log2(TPM + 1), fill =
 ######################## STEP-3: IDENTIFY ISOFORM SWITCHES ##################
 
 ?isoformSwitchTestDEXSeq
-set.seed(42)
+
 SwitchListAnalyzed <- isoformSwitchTestDEXSeq(
   switchAnalyzeRlist = SwitchListFiltered,
   reduceToSwitchingGenes=TRUE)
@@ -258,10 +263,12 @@ summary(SwitchListAnalyzed)
 
 ############### Add CPC2 Analysis ####################
 
+?analyzeCPC2
+
 SwitchListAnalyzed <- analyzeCPC2(
   switchAnalyzeRlist   = SwitchListAnalyzed,
   pathToCPC2resultFile = "switchanalyzer_output/result_cpc2.txt",
-  removeNoncodinORFs   = TRUE)
+  removeNoncodinORFs   = FALSE)
 
 
 summary(SwitchListAnalyzed)
@@ -282,7 +289,7 @@ head(SwitchListAnalyzed$isoformFeatures$isoform_id)
 
 SwitchListAnalyzed <- analyzeIUPred2A(
   switchAnalyzeRlist        = SwitchListAnalyzed,
-  pathToIUPred2AresultFile = "switchanalyzer_output/IUPred2A_result.txt",
+  pathToIUPred2AresultFile = "switchanalyzer_output/IUPred2A_result_2.txt",
   showProgress = TRUE)
 
 SwitchListAnalyzed
@@ -292,7 +299,7 @@ SwitchListAnalyzed
 
 SwitchListAnalyzed <- analyzeSignalP(
   switchAnalyzeRlist       = SwitchListAnalyzed,
-  pathToSignalPresultFile  = "switchanalyzer_output/SignalP_result.txt")
+  pathToSignalPresultFile  = "switchanalyzer_output/SignalP_result_2.txt")
 
 
 ################# Add DeepLoc2 Analysis ############################
@@ -522,6 +529,12 @@ extractSplicingGenomeWide(
   plot=TRUE,
   returnResult=FALSE)
 
+extractConsequenceGenomeWide(
+  SwitchListAnalyzed,
+  featureToExtract = "all",
+  annotationToAnalyze = "all"
+)
+
 
 
 ################ Analyze Biological Mechanisms behind Isoform Siwtching #############
@@ -594,4 +607,3 @@ grid.draw(myVenn)
 
 
 ######################## END OF ANALYSIS ####################################
-

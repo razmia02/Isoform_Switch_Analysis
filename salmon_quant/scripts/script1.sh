@@ -144,7 +144,7 @@ echo "Salmon Quantification"
 
 salmon quant -i ${ref_files}/salmon_index_decoy -l A \
         -1 ${process_data}/SRR24053380_1.fastq.gz -2 ${process_data}/SRR24053380_2.fastq.gz  \
-        -o ${salmon_output}/SRR24053380_trans_quant --validateMappings
+        -o ${salmon_output}/SRR24053380_trans_quant --validateMappings --gcBias --seqBias
 
 echo "Quantification Complete!"
 
