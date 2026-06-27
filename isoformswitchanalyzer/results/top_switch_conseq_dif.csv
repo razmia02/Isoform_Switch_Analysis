@@ -1,0 +1,11 @@
+"","gene_ref","gene_id","gene_name","condition_1","condition_2","gene_switch_q_value","combinedDIF","switchConsequencesGene","Rank"
+"1","geneComp_00026787","ODAD3","ODAD3","normal","tumor",5.38511920077266e-09,1.15365625,TRUE,1
+"2","geneComp_00006325","ENSG00000144785","ENSG00000144785","normal","tumor",0.00451251437422399,1.03765625,TRUE,2
+"3","geneComp_00031612","RUNX2","RUNX2","normal","tumor",5.64670429163694e-10,0.88021875,TRUE,3
+"4","geneComp_00017997","FGF13","FGF13","normal","tumor",3.98124452152589e-07,0.84619375,TRUE,4
+"5","geneComp_00026200","NINJ2","NINJ2","normal","tumor",0.000119775098550848,0.817375,TRUE,5
+"6","geneComp_00032123","SERPINF1","SERPINF1","normal","tumor",1.10849797045333e-05,0.7952,TRUE,6
+"7","geneComp_00005955","EEF1A2","EEF1A2","normal","tumor",7.27011108260045e-06,0.77184875,TRUE,7
+"8","geneComp_00032456","SLC12A8","SLC12A8","normal","tumor",9.08958516434453e-08,0.7611875,TRUE,8
+"9","geneComp_00028774","PPRC1","PPRC1","normal","tumor",1.4510234063951e-06,0.731775,TRUE,9
+"10","geneComp_00017817","FBLN2","FBLN2","normal","tumor",3.93612534927646e-11,0.7222,TRUE,10

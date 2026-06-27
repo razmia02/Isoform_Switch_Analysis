@@ -16,6 +16,7 @@ library(ggrepel)
 library(tidyr)
 library(dplyr)
 library(VennDiagram)
+library(readr)
 
 
 
@@ -41,7 +42,7 @@ salmonQuant <- importIsoformExpression(
 
 ############## Load the metadata info ############################
 
-metadata <- read.csv("D:/Projects/Isoform_Switching/Updated_Metadata.csv")
+metadata <- read.csv("metadata.csv")
 
 View(metadata)
 
@@ -137,10 +138,10 @@ pca_df$patient <- SwitchListFiltered$designMatrix$patient[
 
 ggplot(pca_df, aes(x = PC1, y = PC2, color = condition)) +
   # Keep the points completely standard and clean
-  geom_point(size = 4) +    
+  geom_point(size = 5) +    
   
   # Crucial: Use the patient column (HC001, HC002) for the text labels instead of SampleID
-  geom_text_repel(aes(label = patient), size = 2, fontface = "bold", color = "gray20") +  
+  geom_text_repel(aes(label = patient), size = 2.75, fontface = "bold", color = "gray20") +  
   
   # Your original high-contrast colors
   scale_color_manual(values = c("normal" = "dodgerblue", "tumor" = "firebrick")) +
@@ -198,7 +199,7 @@ SwitchListAnalyzed <- isoformSwitchTestDEXSeq(
 
 extractSwitchSummary(SwitchListAnalyzed)
 
-#### 420 genes, 676 transcripts/isoforms & 464 switches 
+#### 472 genes, 760 transcripts/isoforms & 514 switches 
 
 summary(SwitchListAnalyzed)
 
@@ -289,7 +290,7 @@ head(SwitchListAnalyzed$isoformFeatures$isoform_id)
 
 SwitchListAnalyzed <- analyzeIUPred2A(
   switchAnalyzeRlist        = SwitchListAnalyzed,
-  pathToIUPred2AresultFile = "switchanalyzer_output/IUPred2A_result_2.txt",
+  pathToIUPred2AresultFile = "switchanalyzer_output/IUPred2A_result.txt",
   showProgress = TRUE)
 
 SwitchListAnalyzed
@@ -299,7 +300,7 @@ SwitchListAnalyzed
 
 SwitchListAnalyzed <- analyzeSignalP(
   switchAnalyzeRlist       = SwitchListAnalyzed,
-  pathToSignalPresultFile  = "switchanalyzer_output/SignalP_result_2.txt")
+  pathToSignalPresultFile  = "switchanalyzer_output/SignalP_result.txt")
 
 
 ################# Add DeepLoc2 Analysis ############################
@@ -307,7 +308,8 @@ SwitchListAnalyzed <- analyzeSignalP(
 deeploc_files <- c(
   "switchanalyzer_output/DeepLoc_1.csv", 
   "switchanalyzer_output/DeepLoc_2.csv",
-  "switchanalyzer_output/DeepLoc_3.csv")
+  "switchanalyzer_output/DeepLoc_3.csv",
+  "switchanalyzer_output/DeepLoc_4.csv")
 
 SwitchListAnalyzed <- analyzeDeepLoc2(
   switchAnalyzeRlist = SwitchListAnalyzed,
@@ -319,7 +321,8 @@ SwitchListAnalyzed <- analyzeDeepLoc2(
 deeptmhmm_files <- c(
   "switchanalyzer_output/DeepTMHMM_1.gff3", 
   "switchanalyzer_output/DeepTMHMM_2.gff3",
-  "switchanalyzer_output/DeepTMHMM_3.gff3")
+  "switchanalyzer_output/DeepTMHMM_3.gff3",
+  "switchanalyzer_output/DeepTMHMM_4.gff3")
 
 SwitchListAnalyzed <- analyzeDeepTMHMM(
   switchAnalyzeRlist   = SwitchListAnalyzed,
@@ -498,15 +501,17 @@ ggplot(data = SwitchListAnalyzed$isoformFeatures,
 
 switchPlot(SwitchListAnalyzed, gene = "LAMA2")
 
-switchPlot(SwitchListAnalyzed, gene = "MAD2L2")
-
-switchPlot(SwitchListAnalyzed, gene = "GAB2")
-
 switchPlot(SwitchListAnalyzed, gene = "LSP1")
+
+switchPlot(SwitchListAnalyzed, gene = "CXCL12")
+
+switchPlot(SwitchListAnalyzed, gene = "MPZ")
 
 switchPlot(SwitchListAnalyzed, gene = "FBLN2")
 
 switchPlot(SwitchListAnalyzed, gene = "APOD")
+
+switchPlot(SwitchListAnalyzed, gene = "MAD2L2")
 
 ########## Plot summarizing Alternative Splicing events ##################
 
@@ -549,7 +554,7 @@ bioMechanismeAnalysis <- analyzeSwitchConsequences(
 
 ########### Verify ###############
 
-table(mechanismAnalysis$featureCompared)
+table(bioMechanismeAnalysis$featureCompared)
 
 ######### Get switches WITH functional consequences ###############
 
@@ -563,14 +568,14 @@ cat("Switches with consequences:", nrow(switchesWithConsequences), "\n")
 
 ############ Create isoPair ID #############
 
-mechanismAnalysis$isoPair <- paste(
-  mechanismAnalysis$isoformUpregulated,
-  mechanismAnalysis$isoformDownregulated,
+bioMechanismeAnalysis$isoPair <- paste(
+  bioMechanismeAnalysis$isoformUpregulated,
+  bioMechanismeAnalysis$isoformDownregulated,
   sep = "_vs_")
 
 ########### Filter mechanisms to only consequence-bearing switches ###########
 
-bioMechanismeAnalysis <- mechanismAnalysis %>%
+bioMechanismeAnalysis <- bioMechanismeAnalysis %>%
   filter(
     isoformsDifferent == TRUE,
     isoformUpregulated  %in% switchesWithConsequences$isoform_id |
@@ -605,5 +610,14 @@ myVenn <- venn.diagram(
 grid.newpage()
 grid.draw(myVenn)
 
+########## Save the SiwtchListAnalyzed object ###################
+
+saveRDS(SwitchListAnalyzed, file = "switchlistanalyzed.rds")
+
+########## Save session info ###################
+
+sink("r_session_info.txt")
+sessionInfo()
+sink()
 
 ######################## END OF ANALYSIS ####################################

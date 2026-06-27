@@ -8,7 +8,7 @@
 
 data=~/salmon_quant/data
 process_data=~/salmon_quant/data/processed_reads
-acc_list=~/salmon_quant/data/SRR_Acc_List.txt
+acc_list=/mnt/d/Projects/Isoform_Switching/salmon_quant/data/SRR_Acc_List.txt
 ref_files=~/salmon_quant/ref_files
 fastqc=~/salmon_quant/fastqc
 fastp=~/salmon_quant/fastp_output
@@ -85,9 +85,10 @@ tail -n +1 "$acc_list" | while read -r accession; do
     cat ${salmon_output}/${accession}_trans_quant/logs/salmon_quant.log | grep "Mapping rate"
 
     ###################################### STEP7: RENAME QUANT FILE #####################################
+    mkdir -p ${salmon_output}/quant_files/${accession}
 
     mv ${salmon_output}/${accession}_trans_quant/quant.sf \
-       ${salmon_output}/${accession}_trans_quant/${accession}_quant.sf
+       ${salmon_output}/quant_files/${accession}/quant.sf
 
     echo "Finished processing: $accession."
 

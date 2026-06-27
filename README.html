@@ -388,9 +388,7 @@ mechanisms in HCC tissues.</li>
 <div id="dataset" class="section level2">
 <h2>Dataset</h2>
 <p>The dataset for this analysis have been obtained from NCBI GEO with
-accession ID <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870">GSE228870</a>.
-The dataset was subset to include 7 HCC samples &amp; 7 matched normal
-thyroid samples.</p>
+accession ID <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE228870">GSE228870</a>.</p>
 </div>
 <div id="methodology" class="section level2">
 <h2>Methodology</h2>
@@ -432,7 +430,7 @@ transcriptome (GRCh38).</p></li>
 <ul>
 <li><p>Check the mapping quality &amp; mapping rate of reads against the
 reference transcriptome.</p></li>
-<li><p>Tool: MultiQC</p></li>
+<li><p>Tool: <code>MultiQC</code></p></li>
 </ul>
 <ol start="6" style="list-style-type: decimal">
 <li><strong>Isoform Switch Analysis</strong></li>
@@ -455,12 +453,6 @@ analyzed.</p></li>
 </div>
 <div id="analytical-decisions-rationale" class="section level2">
 <h2>Analytical Decisions &amp; Rationale</h2>
-<p><strong>Why 7 matched pairs instead of the full dataset?</strong></p>
-<p>The full dataset contains samples lacking matched normal controls.
-For isoform switch analysis, tumour-normal pairing is essential to study
-transcriptomic variation. Computational constraints also informed this
-decision. Only samples with confirmed matched pairs were retained,
-yielding 7 HCC and 7 normal thyroid samples.</p>
 <p><strong>Why Salmon over HISAT2 + featureCounts?</strong></p>
 <p>Isoform-level quantification requires transcript-level resolution.
 HISAT2 + featureCounts is optimised for gene-level count matrices and
@@ -486,6 +478,27 @@ have missed it entirely.</p>
 <div id="results" class="section level2">
 <h2>Results</h2>
 <p>This section will be updated once analysis is completed.</p>
+</div>
+<div id="repo-structure" class="section level2">
+<h2>Repo Structure</h2>
+<pre><code>├── isoformswitchanalyzer
+    ├── IsoformSwitchAnalyze.R      # R script for isoform switch analysis
+    ├── Plots                       # Directory containing Plots
+    ├── Salmon_Quant_QC.R           # R script for initial QC
+    ├── metadata.csv                # metadata info
+    ├── isoformswitchanalyzer.Rproj
+    ├── r_session_info.txt
+    ├── results                     # Directory containing results from switch analysis
+    ├── switchanalyzer_output       # Directory containing external tools results (Pfam, CPC2 etc.)
+    └── switchlistanalyzed.rds
+└── salmon_quant
+    ├── data                        # Directory for fastq files
+    ├── env.yaml                    # Bash tools info
+    ├── fastp_output                # fastp output
+    ├── fastqc                      # fastqc output
+    ├── multiqc                     # multiqc output
+    ├── salmon_output               # directory containing quant.sf files from salmon
+    └── scripts                     # Bash scripts to run salmon</code></pre>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

@@ -1,0 +1,11 @@
+"","gene_ref","gene_id","gene_name","condition_1","condition_2","gene_switch_q_value","switchConsequencesGene","Rank"
+"1","geneComp_00021935","LAMA2","LAMA2","normal","tumor",1.08113829597649e-31,TRUE,1
+"2","geneComp_00024102","LSP1","LSP1","normal","tumor",5.27378446433615e-20,TRUE,2
+"3","geneComp_00024224","MAD2L2","MAD2L2","normal","tumor",7.11890544419874e-19,TRUE,3
+"4","geneComp_00024478","MBD6","MBD6","normal","tumor",6.82241168720433e-14,TRUE,4
+"5","geneComp_00025142","MPZ","MPZ","normal","tumor",8.75590716884938e-14,TRUE,5
+"6","geneComp_00027798","PEX19","PEX19","normal","tumor",3.10726218213219e-13,TRUE,6
+"7","geneComp_00026812","OGFOD3","OGFOD3","normal","tumor",3.4499794773972e-12,TRUE,7
+"8","geneComp_00036649","VAPB","VAPB","normal","tumor",1.02926706891829e-11,TRUE,8
+"9","geneComp_00010701","ENSG00000261840","ENSG00000261840","normal","tumor",3.91409775507254e-11,TRUE,9
+"10","geneComp_00024741","MFSD5","MFSD5","normal","tumor",3.91409775507254e-11,TRUE,10

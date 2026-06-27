@@ -13,7 +13,7 @@ mkdir data fastqc salmon_output scripts ref_files
 
 data=~/salmon_quant/data
 process_data=~/salmon_quant/data/processed_reads
-acc_list=/mnt/d/Projects/Isoform_Switching/SRR_Acc_List_Updated.txt
+acc_list=/mnt/d/Projects/Isoform_Switching/salmon_quant/data/SRR_Acc_List.txt
 ref_files=~/salmon_quant/ref_files
 fastqc=~/salmon_quant/fastqc
 fastp=~/salmon_quant/fastp_output
@@ -70,7 +70,7 @@ wget -P ${ref_files} https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/r
 
 ################### 18 control & 18 tumor samples have been used for this project ##############################
 
-############## The list of accessions used are in txt file (SRR_Acc_List_Updated.txt) ##########################
+############## The list of accessions used are in txt file (SRR_Acc_List.txt) ##########################
 
 ################# Download the file ##########################
 

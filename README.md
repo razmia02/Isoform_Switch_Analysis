@@ -1,7 +1,7 @@
 # Isoform Switch Analysis in Hürthle Cell Carcinoma (HCC)
 
 [![Status](https://img.shields.io/badge/Analysis-In--Progress-orange.svg)]()
-> **Current Status:** Functional annotation steps (Pfam, DeepTMHMM) are currently running on the full dataset. Downstream isoform switch metrics are being integrated.
+> **Current Status:** Downstream isoform switch metrics are being integrated.
 
 ## Background & Motivation
 
@@ -26,61 +26,84 @@ The dataset for this analysis have been obtained from NCBI GEO with accession ID
 
 - Download paired-end raw reads (fastq files) from NCBI GEO. 
 
-- Tool: fasterq-dump
+- Tool: `fasterq-dump`
 
 2. **Initial QC**
 
 - Check the quality of raw reads, including per base sequence quality, adapter sequences, GC content etc. 
 
-- Tool: fastqc
+- Tool: `fastqc`
 
 3. **QC**
 
 - All-in-one processing to remove low quality sequences, over represented sequences & adapter trimming. 
 
-- Tool: fastp
+- Tool: `fastp`
 
 4. **Quantification**
 
 - Mapping & quantification of reads against a reference transcriptome (GRCh38). 
 
-- Tool: Salmon
+- Tool: `Salmon`
 
 5. **Post-Alignment QC**
 
 - Check the mapping quality & mapping rate of reads against the reference transcriptome. 
 
-- Tool: MultiQC
+- Tool: `MultiQC`
 
 6. **Isoform Switch Analysis**
 
 - Isoform switches in tumor samples along with their functional consequences including Non-sense mediated decay (NMD) sensitivity, intron retention & coding potential of isoform was analyzed. 
 
-- Tool: IsoformSwitchAnalyzeR
+- Tool: `IsoformSwitchAnalyzeR`
 
 7. **Visualization**
 
 - Statistically significant switches, alternative splicing events & consequence summary for different genes was visualized.
 
-- Tool: IsoformSwitchAnalyzeR
+- Tool: `IsoformSwitchAnalyzeR`
 
 ## Analytical Decisions & Rationale
 
 **Why Salmon over HISAT2 + featureCounts?**
 
-Isoform-level quantification requires transcript-level resolution. HISAT2 + featureCounts is optimised for gene-level count matrices and would have required additional assembly steps (e.g. StringTie) to recover novel isoforms, which was outside the scope of this analysis. Salmon's quasi-mapping approach quantifies directly against the reference transcriptome at transcript resolution, is computationally efficient, and its output integrates directly with IsoformSwitchAnalyzeR. `--validateMappings` was enabled to improve mapping accuracy by removing invalid multi-mapping reads.
-
-**Why GENCODE v44 as reference?**
-
-GENCODE v44 provides the most comprehensive human transcript annotation, including complete genome assembly (GRCh38.p14) and a matched GTF file required for transcript-level quantification. Using a comprehensive annotation is critical for isoform analysis.
+Isoform-level quantification requires transcript-level resolution. `HISAT2` + `featureCounts` is optimised for gene-level count matrices and would have required additional assembly steps (e.g. `StringTie`) to recover novel isoforms, which was outside the scope of this analysis. `Salmon`'s quasi-mapping approach quantifies directly against the reference transcriptome at transcript resolution, is computationally efficient, and its output integrates directly with `IsoformSwitchAnalyzeR`. 
+`--validateMappings` was enabled to improve mapping accuracy by removing invalid multi-mapping reads.
+`--gcBias` and `--seqBias` flags were used to account for systematic biases inherent to Illumina sequencing.
 
 **Why isoform-level analysis over standard DEG?**
 
-Standard DEG analysis (e.g. DESeq2 on gene-level counts) would not capture scenarios where total gene expression is stable but isoform usage shifts — a pattern that can have profound functional consequences. DIXDC1 is a direct example from this dataset: gene-level analysis would have missed it entirely.
+Standard DEG analysis (e.g. `DESeq2` on gene-level counts) would not capture scenarios where total gene expression is stable but isoform usage shifts — a pattern that can have profound functional consequences. 
+
 
 ## Results
 
 This section will be updated once analysis is completed. 
+
+
+## Repo Structure
+
+```
+├── isoformswitchanalyzer
+    ├── IsoformSwitchAnalyze.R      # R script for isoform switch analysis
+    ├── Plots                       # Directory containing Plots
+    ├── Salmon_Quant_QC.R           # R script for initial QC
+    ├── metadata.csv                # metadata info
+    ├── isoformswitchanalyzer.Rproj
+    ├── r_session_info.txt
+    ├── results                     # Directory containing results from switch analysis
+    ├── switchanalyzer_output       # Directory containing external tools results (Pfam, CPC2 etc.)
+    └── switchlistanalyzed.rds
+└── salmon_quant
+    ├── data                        # Directory for fastq files
+    ├── env.yaml                    # Bash tools info
+    ├── fastp_output                # fastp output
+    ├── fastqc                      # fastqc output
+    ├── multiqc                     # multiqc output
+    ├── salmon_output               # directory containing quant.sf files from salmon
+    └── scripts                     # Bash scripts to run salmon
+```
 
 
 ## References
