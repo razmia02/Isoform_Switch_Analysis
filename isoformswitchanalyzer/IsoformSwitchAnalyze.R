@@ -164,6 +164,8 @@ ggplot(scree_df, aes(x = PC, y = Variance)) +
   labs(title = "Scree Plot", y = "% Variance Explained", x = "Principal Component") +
   theme_bw()
 
+aSwitchList$designMatrix
+
 ##################### PLOT TPM ##############################
 
 ############### Reshape to long format ####################
@@ -474,6 +476,8 @@ best_candidates <- SwitchListAnalyzed$isoformFeatures %>%
          switchConsequencesGene)
 
 head(best_candidates, 20)
+
+write.csv(best_candidates, "results/top_switches_sig.csv")
 
 #_______________________________________________________________________________
 
