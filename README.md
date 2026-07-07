@@ -85,12 +85,16 @@ The overall mapping rate of samples ranged from 85.62% to 93.71%. Two samples sh
   <figcaption><b>Figure 1:</b> Combined QC metrics for the transcript quantification data.</figcaption>
 </figure>
 
+
+
 PCA on log2-transformed TPM values from 25% most variable isoforms showed separation between normal and tumor samples ([Figure 2](#figure2)). Tumor samples clustered predominantly on left side of the plot while normal samples clustered on the right side. PC1 explained 37.4% of total variance and separation of tumor and normal samples along the x-axis suggested that biological condition is the primary driver of transcriptomic variability. PC2 explained 13.3% variance and captured inter-patient heterogeneity. However, samples HC004, HC005 and HC007 showed larger distances across both PCs, suggesting greater transcriptomic divergence between tumor and normal tissues in these patients. Sample HC022 showed intermediate variance across PC1 suggesting lower transcriptomic divergence between its tumor and normal samples compared to the rest of dataset. 
 
 <figure id="figure2" style="text-align: center; margin-bottom: 25px;">
   <img src="isoformswitchanalyzer/Plots/PCA_plot.png" alt="PCA Plot" width="85%">
   <figcaption><b>Figure 2:</b> PCA plot evaluating global sample variance based on transcript expression profiles.</figcaption>
 </figure>
+
+
 
 `IsoformSwitchTestDEXSeq()` identified 514 isoform switching events across 472 genes involving 760 distinct isoforms. Differential isoform usage identified 514 statistically significant isoform switches across 472 genes as significant (q-value < 0.05 and |dif| > 0.1). After filtering the list for functional consequences, 371 isoform switches across 335 genes involving 551 isoforms remained. Switch consequence summary plot ([Figure 3](#figure3)) shows functional outcome of isoform switches in HCC. The plot indicates that isoforms in HCC lose protein domains more frequently than gain protein domains and have reduced topology complexity. Moreover, isoforms in HCC result in production of shorter ORFs and majority of isoforms retain their coding potential. Isoforms expressed in HCC frequently exhibited signal peptide loss and are expressed in different sub-cellular localization than their normal counterparts. Collectively, these findings indicate that isoforms overexpressed in HCC encode for shorter ORFs with smaller protein domains, have simpler membrane topology, reduced  involvement in secretory pathways and are predicted to acquire novel sub-cellular localizations. 
 
@@ -99,12 +103,16 @@ PCA on log2-transformed TPM values from 25% most variable isoforms showed separa
   <figcaption><b>Figure 3:</b> Summary of identified isoform switches featuring predicted functional consequences.</figcaption>
 </figure>
 
+
+
 Top genes filtered after q-value and dif cutoff included LAMA2 (rank = 1, dif = 0.197, q-value = 1.08e-31), LSP1 (rank = 2, dif = 0.386, q-value = 5.27e-20), MAD2L2 (rank = 3, dif = -0.331, q-value = 7.12e-19), and CXCL12 (rank = 10, dif = -0.334, q-value = 4.31e-11). Switch Plot for LAMA2 ([Figure 4](#figure4))shows overall gene expression of LAMA2 is reduced to half in tumor tissues, while the absolute expression of one if its isoforms ENST00000617695.5 is increased in tumor tissues. Isoform usage plot shows that ENST00000617695.5 is used significantly more in HCC than in normal tissues. On the other hand, usage of ENST00000421865.3 and ENST00000688799.1 is significantly decreased in tumor tissues relative to normal tissue. ENST00000617695.5 is one of the coding isoforms of LAMA2 and the switch plot show that the isoform lacks a C-terminus protein region present in the canonical isoform ENST00000421865.3. This truncation may compromise the laminin polymerization within extracellular matrix (ECM). ENST00000688799.1 is also a coding isoform and has relatively simpler structure consisting of shorter sequences and fewer domains than other isoforms of LAMA2. 
 
 <figure id="figure4" style="text-align: center; margin-bottom: 25px;">
   <img src="isoformswitchanalyzer/Plots/Switch_Plot_LAMA2.png" alt="LAMA2 Switch Plot" width="85%">
   <figcaption><b>Figure 4:</b> Detailed structural layout and switch-expression profile for the <i>LAMA2</i> gene.</figcaption>
 </figure>
+
+
 
 A summary graph of overall alternative splicing events for 760 isoforms ([Figure 5](#figure5)) show that ATSS was the dominant event in both isoforms used more and less in HCC. ATTS show a directional asymmetry, with isoforms gaining this event in tumor, thereby explaining shift towards alternative termination site usage in HCC. 
 
@@ -120,6 +128,8 @@ Among the switches with confirmed functional consequences, AS, ATSS and ATTS wer
   <img src="isoformswitchanalyzer/Plots/Splice_Enrichment_Graph.png" alt="Splice Enrichment Graph" width="80%">
   <figcaption><b>Figure 6:</b> Splice enrichment graph visualizing the statistical significance of each splicing event type in HCC.</figcaption>
 </figure>
+
+
 
 ## Repo Structure
 
