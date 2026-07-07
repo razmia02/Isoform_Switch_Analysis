@@ -81,7 +81,7 @@ Standard DEG analysis (e.g. `DESeq2` on gene-level counts) would not capture sce
 The overall mapping rate of samples ranged from 85.62% to 93.71%. Two samples showed mapping rate < 75% (SRR24053377 & SRR24053395). These tumor samples along with their matched controls (SRR24053378 & SRR24053396 respectively) were dropped to preserve paired design integrity, leaving 16 pairs (32 samples) for isoform switch analysis. [Figure 1](#figure1)shows the combined QC metrics of all samples, illustrating that majority of samples passed the mapping rate threshold of 75%, with mapped reads and transcript count exceeding 20.4M and 50.9K respectively. 
 
 <figure id="figure1" style="text-align: center; margin-bottom: 25px;">
-  <img src="isoformswitchanalyzer/Plots/Combined_QC_metrics.png" alt="Combined QC Metrics" width="85%">
+  <img src="isoformswitchanalyzer/Plots/Combined_QC_Metrics.png" alt="Combined QC Metrics" width="85%">
   <figcaption><b>Figure 1:</b> Combined QC metrics for the transcript quantification data.</figcaption>
 </figure>
 
