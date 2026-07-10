@@ -61,6 +61,12 @@ The dataset for this analysis have been obtained from NCBI GEO with accession ID
 
 - Tool: `IsoformSwitchAnalyzeR`
 
+8. **Validation**
+
+- The expression of genes and their respective isoforms in normal thyroid tissue and the splicing mechanisms in thyroid cancer were used to validate genes and isoforms in HCC. 
+
+- GTEx portal and TCGA SpliceSeq. 
+
 ## Analytical Decisions & Rationale
 
 **Why Salmon over HISAT2 + featureCounts?**
@@ -126,6 +132,8 @@ Among the switches with confirmed functional consequences, AS, ATSS and ATTS wer
 </figure>
 
 <br><br>
+
+Validation through GTEx and TCGA SpliceSeq show that genes showing alternative splicing and isoform switching in HCC are also expressed in normal thyroid tissue. LAMA2 and MAD2L2 isoforms (ENST00000617695.5 for LAMA2, ENST00000376667.7 & ENST00000697274.1 for MAD2L2) which show increased usage in HCC are under expressed in normal thyroid, suggesting that these isoforms are tumor-related and their increased usage in HCC represents dysregulated splicing regulation. SpliceSeq results show that LAMA2, MAD2L2, LSP1 and CXCL12 undergo concordant splicing mechanisms across thyroid cancer and HCC suggesting that splicing dysregulation is shared across thyroid malignancies. Notably, LSP1 and CXCL12 were reported to undergo alternative promoter (PSI: 94.5% for LSP1) and alternative termination (PSI: 53.9% for CXCL12) respectively confirming ATTS and ATSS as significant splicing mechanisms in HCC. 
 
 ## Repo Structure
 
