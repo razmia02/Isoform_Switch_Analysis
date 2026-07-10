@@ -2,45 +2,33 @@
 
 ##################### Script to download fastq files, initial QC, Salmon Index & Salmon Quantification ###########################
 
+########### Stop the script immediately if any single command fails #############
+
+set -e
+
 #_____________________________________________________________________________________________________________________________________
-
-#################################### SETUP DIRECTORIES ######################################################
-
-mkdir data fastqc salmon_output scripts ref_files
-
 
 #################################### DEFINE DIRECTORY PATHS ###########################################
 
-data=~/salmon_quant/data
-process_data=~/salmon_quant/data/processed_reads
-acc_list=/mnt/d/Projects/Isoform_Switching/salmon_quant/data/SRR_Acc_List.txt
-ref_files=~/salmon_quant/ref_files
-fastqc=~/salmon_quant/fastqc
-fastp=~/salmon_quant/fastp_output
-salmon_output=~/salmon_quant/salmon_output
+data="../data"
+process_data="../data/processed_reads"
+acc_list="../data/SRR_Acc_List.txt"
+ref_files="../ref_files"
+fastqc="../fastqc"
+fastp="../fastp_output"
+salmon_output="../salmon_output"
+
+
+#################################### SETUP DIRECTORIES ######################################################
+
+mkdir -p $data $process_data $ref_files $fastqc $fastp $salmon_output
+
 
 #___________________________________________________________________________________________________________________
 
 #################################### SETUP PACKAGES & LIBRARIES  ####################################################
 
-######################## SRA-TOOLKIT ##############################
-
-sudo apt install sra-toolkit ####### Install Sra-toolkit
-
-fastq-dump --version #### Check if sra-toolkit is installed successfully
-
-###################### SALMON ##############################
-
-### Add the necessary channels
-conda config --add channels defaults
-conda config --add channels bioconda
-conda config --add channels conda-forge
-
-############### Install Salmon ##########################
-
-conda create -n salmon -c bioconda -c conda-forge salmon
-
-conda activate salmon
+fastq-dump --version 
 
 salmon --version
 

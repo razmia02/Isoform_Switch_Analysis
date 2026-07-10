@@ -34,7 +34,7 @@ getwd()
 ########## Import Salmon data ################
 
 salmonQuant <- importIsoformExpression(
-  parentDir = "D:/Projects/Isoform_Switching/salmon_output/quant_files",
+  parentDir = "../salmon_quant/salmon_output/quant_files",
   addIsofomIdAsColumn = TRUE)
 
 
@@ -65,8 +65,8 @@ aSwitchList <- importRdata(
   isoformCountMatrix   = salmonQuant$counts,
   isoformRepExpression = salmonQuant$abundance,
   designMatrix         = myDesign,
-  isoformExonAnnoation = "D:/Projects/Isoform_Switching/salmon_quant/ref_files/gencode.v44.annotation.gtf.gz",
-  isoformNtFasta       = "D:/Projects/Isoform_Switching/salmon_quant/ref_files/gencode.v44.transcripts.fa.gz",
+  isoformExonAnnoation = "../salmon_quant/ref_files/gencode.v44.annotation.gtf.gz",
+  isoformNtFasta       = "../salmon_quant/ref_files/gencode.v44.transcripts.fa.gz",
   showProgress = FALSE)
 
 
@@ -270,7 +270,7 @@ summary(SwitchListAnalyzed)
 
 SwitchListAnalyzed <- analyzeCPC2(
   switchAnalyzeRlist   = SwitchListAnalyzed,
-  pathToCPC2resultFile = "switchanalyzer_output/result_cpc2.txt",
+  pathToCPC2resultFile = "result_cpc2.txt",
   removeNoncodinORFs   = FALSE)
 
 
@@ -281,7 +281,7 @@ summary(SwitchListAnalyzed)
 
 SwitchListAnalyzed <- analyzePFAM(
   switchAnalyzeRlist   = SwitchListAnalyzed,
-  pathToPFAMresultFile = "switchanalyzer_output/pfam_result.txt",
+  pathToPFAMresultFile = "pfam_result.txt",
   showProgress=TRUE)
 
 head(SwitchListAnalyzed$isoformFeatures$isoform_id)
@@ -292,7 +292,7 @@ head(SwitchListAnalyzed$isoformFeatures$isoform_id)
 
 SwitchListAnalyzed <- analyzeIUPred2A(
   switchAnalyzeRlist        = SwitchListAnalyzed,
-  pathToIUPred2AresultFile = "switchanalyzer_output/IUPred2A_result.txt",
+  pathToIUPred2AresultFile = "IUPred2A_result.txt",
   showProgress = TRUE)
 
 SwitchListAnalyzed
@@ -302,16 +302,16 @@ SwitchListAnalyzed
 
 SwitchListAnalyzed <- analyzeSignalP(
   switchAnalyzeRlist       = SwitchListAnalyzed,
-  pathToSignalPresultFile  = "switchanalyzer_output/SignalP_result.txt")
+  pathToSignalPresultFile  = "SignalP_result.txt")
 
 
 ################# Add DeepLoc2 Analysis ############################
 
 deeploc_files <- c(
-  "switchanalyzer_output/DeepLoc_1.csv", 
-  "switchanalyzer_output/DeepLoc_2.csv",
-  "switchanalyzer_output/DeepLoc_3.csv",
-  "switchanalyzer_output/DeepLoc_4.csv")
+  "DeepLoc_1.csv", 
+  "DeepLoc_2.csv",
+  "DeepLoc_3.csv",
+  "DeepLoc_4.csv")
 
 SwitchListAnalyzed <- analyzeDeepLoc2(
   switchAnalyzeRlist = SwitchListAnalyzed,
@@ -321,10 +321,10 @@ SwitchListAnalyzed <- analyzeDeepLoc2(
 ################### Add DeepTMHMM Analysis #########################
 
 deeptmhmm_files <- c(
-  "switchanalyzer_output/DeepTMHMM_1.gff3", 
-  "switchanalyzer_output/DeepTMHMM_2.gff3",
-  "switchanalyzer_output/DeepTMHMM_3.gff3",
-  "switchanalyzer_output/DeepTMHMM_4.gff3")
+  "DeepTMHMM_1.gff3", 
+  "DeepTMHMM_2.gff3",
+  "DeepTMHMM_3.gff3",
+  "DeepTMHMM_4.gff3")
 
 SwitchListAnalyzed <- analyzeDeepTMHMM(
   switchAnalyzeRlist   = SwitchListAnalyzed,
@@ -408,7 +408,7 @@ top_switch_conseq_q <- extractTopSwitches(
 
 top_switch_conseq_q
 
-write.csv(top_switch_conseq_q, "results/top_switch_conseq_q.csv")
+write.csv(top_switch_conseq_q, "top_switch_conseq_q.csv")
 
 
 ########## Extract top switching genes by dif-value #############
@@ -423,7 +423,7 @@ top_switch_conseq_dif <- extractTopSwitches(
 
 top_switch_conseq_dif
 
-write.csv(top_switch_conseq_dif, "results/top_switch_conseq_dif.csv")
+write.csv(top_switch_conseq_dif, "top_switch_conseq_dif.csv")
 
 
 ######## Extract data frame with all switching isoforms ###############
@@ -444,7 +444,7 @@ nrow(significantSwitches)
 
 length(unique(significantSwitches$gene_name))
 
-write.csv(significantSwitches, "results/significant_switches_filtered.csv", row.names = FALSE)
+write.csv(significantSwitches, "significant_switches_filtered.csv", row.names = FALSE)
 
 View(significantSwitches)
 
@@ -477,7 +477,7 @@ best_candidates <- SwitchListAnalyzed$isoformFeatures %>%
 
 head(best_candidates, 20)
 
-write.csv(best_candidates, "results/top_switches_sig.csv")
+write.csv(best_candidates, "top_switches_sig.csv")
 
 #_______________________________________________________________________________
 

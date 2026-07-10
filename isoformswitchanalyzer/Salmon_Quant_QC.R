@@ -9,7 +9,7 @@ library(ggplot2)
 
 ################## Read in the data ######################
 
-mapping_df <- read.csv("D:/Projects/Isoform_Switching/Mapping_Rate.csv")
+mapping_df <- read.csv("Mapping_Rate.csv")
 
 ####### Check what's in the column ##########
 
@@ -48,7 +48,7 @@ ggplot(mapping_df, aes(x = reorder(sample, mapping_rate),
 
 ################ Read in the quant files data ######################
 
-salmon_dir <- "D:/Projects/Isoform_Switching/salmon_output/quant_files"
+salmon_dir <- "salmon_output/quant_files"
 
 ########## Find all quant.sf files ###########
 
@@ -75,7 +75,7 @@ print(count_summary)
 
 ########### Add condition from metadata ################
 
-metadata <- read.csv("D:/Projects/Isoform_Switching/Paper/Supplementary_Table_1.csv")
+metadata <- read.csv("metadata.csv")
 
 print(metadata)
 
@@ -130,7 +130,7 @@ ggplot(count_summary, aes(x = reorder(sample, num_transcripts_detected),
   theme(plot.title = element_text(face = "bold"),
         axis.text.y = element_text(size = 9))
 
-ggsave("results/transcripts_detected.png", width = 8, height = 6, dpi = 300)
+ggsave("transcripts_detected.png", width = 8, height = 6, dpi = 300)
 
 ###### Plot Both metrics combined in one figure #############
 
@@ -237,7 +237,7 @@ combined_long <- combined_qc %>%
                                             "Mapped Reads (M)", 
                                             "Transcripts Detected (K)")))
 
-write.csv(combined_long, "results/combined_qc_metrics.csv")
+write.csv(combined_long, "combined_qc_metrics.csv")
 
 ############# Plot all three metrics combined ################
 

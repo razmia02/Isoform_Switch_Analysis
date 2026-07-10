@@ -135,27 +135,94 @@ Among the switches with confirmed functional consequences, AS, ATSS and ATTS wer
 
 Validation through GTEx and TCGA SpliceSeq show that genes showing alternative splicing and isoform switching in HCC are also expressed in normal thyroid tissue. LAMA2 and MAD2L2 isoforms (ENST00000617695.5 for LAMA2, ENST00000376667.7 & ENST00000697274.1 for MAD2L2) which show increased usage in HCC are under expressed in normal thyroid, suggesting that these isoforms are tumor-related and their increased usage in HCC represents dysregulated splicing regulation. SpliceSeq results show that LAMA2, MAD2L2, LSP1 and CXCL12 undergo concordant splicing mechanisms across thyroid cancer and HCC suggesting that splicing dysregulation is shared across thyroid malignancies. Notably, LSP1 and CXCL12 were reported to undergo alternative promoter (PSI: 94.5% for LSP1) and alternative termination (PSI: 53.9% for CXCL12) respectively confirming ATTS and ATSS as significant splicing mechanisms in HCC. 
 
+## Getting Started
+
+To run this pipeline locally, open your terminal, clone the repository, and navigate into the project directory:
+
+```bash
+git clone https://github.com/razmia02/Isoform_Switch_Analysis.git
+cd Isoform_Switch_Analysis
+```
+
+### Environment Setup 
+
+`conda env create -f salmon_quant/env.yaml`
+
+`conda activate salmon`
+
+
+### R Dependencies
+
+Open RStudio using the `isoformswitchanalyzer.Rproj` file and ensure the following libraries are installed:
+
+```
+
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("IsoformSwitchAnalyzeR")
+install.packages(c("ggplot2", "ggrepel", "tidyr", "dplyr", "VennDiagram", "readr"))
+
+```
+
+## Run the Analysis Yourself
+
+We provide two separate automation scripts inside the `salmon_quant/scripts/` directory depending on your processing needs:
+
+### Option A: Quick Test (Single Sample)
+
+If you want to quickly test the pipeline infrastructure without downloading the entire cohort, run `script1.sh`. This script runs the entire end-to-end pipeline (download, QC, indexing, and quantification) for just a single sample (`SRR24053380`).
+
+```
+cd salmon_quant/scripts
+chmod +x script1.sh
+./script1.sh
+
+```
+### Option B: Analysis on Full Dataset (Looping through Samples)
+
+To process the full dataset (all 18 control and 18 tumor samples), use `script2.sh`. This script reads the sample accessions line-by-line from your `data/SRR_Acc_List.txt` file and automatically loops through them to download and quantify the entire cohort.
+
+```
+cd salmon_quant/scripts
+chmod +x script2.sh
+./script2.sh
+```
+
+### Isoform Switch Analysis
+
+1. Navigate to the `isoformswitchanalyzer/` directory.
+
+2. Launch RStudio by double-clicking `isoformswitchanalyzer.Rproj`.
+
+3. Open and run `IsoformSwitchAnalyze.R`.
+
+*Note on External Sequence Tools:* Step 6 of the R workflow utilizes webserver prediction outputs (Pfam, CPC2, DeepLoc2, SignalP, etc.). Ensure your downloaded result tracking files match the names specified in Step 7 of the script (e.g., `pfam_result.txt`, `result_cpc2.txt`) and are placed directly inside the `isoformswitchanalyzer/` folder.
+
 ## Repo Structure
 
 ```
 ├── isoformswitchanalyzer
     ├── IsoformSwitchAnalyze.R      # R script for isoform switch analysis
-    ├── Plots                       # Directory containing Plots
+    ├── Plots/                       # Directory containing Plots
     ├── Salmon_Quant_QC.R           # R script for initial QC
     ├── metadata.csv                # metadata info
     ├── isoformswitchanalyzer.Rproj
     ├── r_session_info.txt
-    ├── results                     # Directory containing results from switch analysis
-    ├── external_tools_output       # Directory containing external tools results (Pfam, CPC2 etc.)
+    ├── results/                     # Directory containing results from switch analysis
+    ├── external_tools_output/       # Directory containing external tools results (Pfam, CPC2 etc.)
     └── switchlistanalyzed.rds
 └── salmon_quant
     ├── data                        # Directory for fastq files
+        └── SRR_Acc_List.txt        # Sample accessions for complete dataset (GSE228870)
     ├── env.yaml                    # Bash tools info
     ├── fastp_output                # fastp output
     ├── fastqc                      # fastqc output
     ├── multiqc                     # multiqc output
     ├── salmon_output               # directory containing quant.sf files from salmon
     └── scripts                     # Bash scripts to run salmon
+        ├── script1.sh              # Single-sample quick execution script
+        └── script2.sh              # Multi-sample batch loop pipeline script
 ```
 
 

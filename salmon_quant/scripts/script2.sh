@@ -6,19 +6,14 @@
 
 ################################# DEFINE DIRECTORY PATHS ###################################
 
-data=~/salmon_quant/data
-process_data=~/salmon_quant/data/processed_reads
-acc_list=/mnt/d/Projects/Isoform_Switching/salmon_quant/data/SRR_Acc_List.txt
-ref_files=~/salmon_quant/ref_files
-fastqc=~/salmon_quant/fastqc
-fastp=~/salmon_quant/fastp_output
-salmon_output=~/salmon_quant/salmon_output
-multiqc=~/salmon_quant/multiqc
+data="../data"
+process_data="../data/processed_reads"
+acc_list="../data/SRR_Acc_List.txt"
+ref_files="../ref_files"
+fastqc="../fastqc"
+fastp="../fastp_output"
+salmon_output="../salmon_output"
 
-
-#################################### Activate Salmon env ##################################
-
-conda activate salmon
 
 
 ##################################### LOOP THE PROCESS ######################################
