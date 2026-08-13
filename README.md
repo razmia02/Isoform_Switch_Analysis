@@ -7,6 +7,8 @@ remains largely unexplored. No studies to date have specifically characterised i
 
 The analysis is performed on NCBI GEO dataset and explores the expression profiles of different isoforms in HCC tissues. The original study explored metabolomic profiles of HCC and identified that mitochondrial complex I loss along with lipid peroxide stress is a vulnerability in HCC. This analysis performed on a subset of samples explores the isoform profiles in HCC, identifies some major genes undergoing functional isoform switching and highlights alternative splicing mechanisms that may drive the pathogenesis of the disease. 
 
+**Preprint:** For complete methodology and detailed results, please see the bioRxiv preprint: [Functional Characterization of Transcriptome-Wide Isoform Switching in Hürthle Cell Carcinoma (HCC)](https://doi.org/10.64898/2026.07.23.740299).
+
 ## Objective
 
 * Quantify the expression of transcripts between normal & HCC tissues.
